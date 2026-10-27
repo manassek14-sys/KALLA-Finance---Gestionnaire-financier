@@ -1,0 +1,21 @@
+KALLA FINANCE — INSTALLATION
+
+CONTENU
+- index.html : application de calcul
+- manifest.webmanifest : paramètres d'installation
+- sw.js : cache hors connexion après la première visite
+- icon-192.png et icon-512.png : icônes
+
+IMPORTANT
+Un fichier HTML ouvert localement ne peut pas être installé comme une vraie PWA iPhone avec toutes ses fonctions. Pour obtenir l'icône sur l'écran d'accueil, il faut publier ces fichiers sur une adresse HTTPS.
+
+OPTION SIMPLE : héberger gratuitement avec GitHub Pages
+1. Depuis un ordinateur, connecte-toi à GitHub et crée un dépôt public nommé kalla-finance.
+2. Téléverse les 5 fichiers du dossier à la racine du dépôt.
+3. Dans Settings > Pages, active le déploiement depuis la branche main et le dossier /(root).
+4. Attends que GitHub fournisse l'adresse HTTPS du site.
+5. Sur l'iPhone, ouvre cette adresse dans Safari.
+6. Appuie sur Partager > Sur l'écran d'accueil > Ajouter.
+7. Ouvre l'icône KALLA Finance depuis l'écran d'accueil.
+
+Les libellés peuvent varier selon la version d'iOS. Le logiciel ne demande pas de compte bancaire et ne transmet pas les montants.

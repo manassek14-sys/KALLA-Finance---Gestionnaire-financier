@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KALLA Finance">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<title>KALLA Finance</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#131d31;--panel2:#1b2942;--text:#f4f7ff;--muted:#b0bdd2;--gold:#dfbd74;--line:#31415f;--green:#79ddb0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:30px}
+header{padding:25px 17px 15px;max-width:900px;margin:auto}.brand{font-size:.75rem;letter-spacing:.15em;font-weight:800;color:var(--gold)}h1{font-size:2rem;line-height:1.1;margin:9px 0}p{color:var(--muted);margin:7px 0 14px}
+main{max-width:900px;margin:auto;padding:0 12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:13px 0}h2{font-size:1.16rem;margin:0 0 8px}label{display:block;color:var(--muted);font-size:.9rem;margin:10px 0 6px}
+input,select,button{font:inherit;border-radius:11px}input,select{width:100%;padding:13px;background:#0b1324;border:1px solid var(--line);color:var(--text)}button{padding:12px 14px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;font-weight:650}.primary{background:var(--gold);color:#19150c;border-color:var(--gold)}
+.row{display:flex;gap:12px}.row>*{flex:1;min-width:0}.big{font-size:1.75rem;font-weight:850;color:var(--green);overflow-wrap:anywhere;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px;min-width:0}.tile .nm{font-size:.86rem;color:var(--muted)}.tile .pct{font-size:.77rem;color:var(--gold);margin:3px 0}.tile .val{font-weight:800;overflow-wrap:anywhere}
+.total{border-top:1px solid var(--line);margin-top:13px;padding-top:12px;display:flex;justify-content:space-between;gap:12px;font-weight:800}.note{font-size:.88rem;background:#29251c;border-left:3px solid var(--gold);padding:12px;border-radius:8px;color:#f0e5c9}.muted{color:var(--muted);font-size:.86rem}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.actions button{flex:1}
+footer{max-width:900px;margin:auto;padding:10px 17px;color:var(--muted);font-size:.8rem}
+@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+</style>
+</head>
+<body>
+<header><div class="brand">KALLA GROUP · FINANCE</div><h1>Gestionnaire financier</h1><p>Change le montant principal : toutes les enveloppes et sous-répartitions se recalculent automatiquement.</p></header>
+<main>
+<section class="card">
+<h2>1. Montant principal distribuable</h2>
+<p class="muted">Saisis le montant après dépenses professionnelles, dettes et provisions fiscales nécessaires.</p>
+<div class="row"><div><label for="amount">Montant</label><input id="amount" type="number" min="0" step="any" inputmode="decimal" value="1000000"></div><div style="max-width:130px"><label for="cur">Devise</label><select id="cur"><option>FCFA</option><option>EUR</option><option>RMB</option></select></div></div>
+<div class="big" id="mainTotal"></div><div class="grid" id="mainGrid"></div>
+<div class="actions"><button class="primary" id="export">Exporter CSV</button><button id="print">Imprimer / PDF</button><button id="reset">Réinitialiser</button></div>
+</section>
+<div class="twocol">
+<section class="card"><h2>2. Fonds d’investissement · 40 %</h2><div class="big" id="investTotal"></div><div class="grid" id="investGrid"></div></section>
+<section class="card"><h2>3. Trésorerie · 25 %</h2><div class="big" id="cashTotal"></div><div class="grid" id="cashGrid"></div></section>
+</div>
+<section class="card"><h2>4. Salaire personnel · 25 %</h2><div class="big" id="salaryTotal"></div><div class="grid" id="salaryGrid"></div></section>
+<section class="card"><h2>5. Vie courante · 25 % du salaire</h2><p class="muted">Cette enveloppe est calculée automatiquement à partir de la catégorie « Vie courante ».</p><div class="big" id="livingTotal"></div><div class="grid" id="livingGrid"></div></section>
+<section class="card"><h2>6. Revenu imprévu personnel</h2><p class="muted">Calcul indépendant pour un revenu exceptionnel personnel net.</p><label for="unexpected">Montant du revenu imprévu</label><input id="unexpected" type="number" min="0" step="any" inputmode="decimal" value="0"><div class="big" id="unexpectedTotal"></div><div class="grid" id="unexpectedGrid"></div></section>
+<section class="card"><h2>À retenir</h2><div class="note"><b>Dîme :</b> ici, elle est calculée sur le montant principal. Si tu veux la prélever sur ton salaire personnel, ne la prélève pas une seconde fois sur le montant principal.</div><p class="muted">Le calculateur répartit les montants mais ne vérifie pas tes obligations fiscales ou les sommes dues aux fournisseurs. Il fonctionne localement dans le navigateur. Pour l’installer comme une application iPhone, il doit être publié sur une adresse HTTPS, puis ajouté à l’écran d’accueil.</p></section>
+</main><footer>KALLA Finance · Version 1.0 · Les données ne sont pas envoyées à un serveur.</footer>
+<script>
+'use strict';
+const A=[
+ {id:'mainGrid',base:1,items:[['✝️ Dîme',10],['💼 Salaire personnel',25],['🏦 Trésorerie entreprise',25],['🚀 Fonds d’investissement',40]]},
+ {id:'investGrid',base:.4,items:[['💼 Business',35],['🏢 Immobilier',25],['📈 Placements financiers',15],['✈️ Voyages commerciaux',10],['⚙️ Matériel / équipements',10],['🎓 Formations professionnelles',5]]},
+ {id:'cashGrid',base:.25,items:[['💵 Fonds de roulement',35],['📦 Stock / marchandises',20],['🧾 Charges & impôts',15],['👨‍💼 Salaires & prestataires',10],['⚠️ Réserve d’urgence',10],['🛠️ Maintenance & réparations',5],['💻 Outils & logiciels',5]]},
+ {id:'salaryGrid',base:.25,items:[['🍽 Vie courante',25],['🏠 Logement',18],['🚗 Voiture',8],['💍 Mariage',8],['🏡 Maison long terme',12],['🎁 Famille / imprévus',7],['💰 Épargne sécurité',5],['🎉 Détente / plaisir',5],['👶 Épargne enfants',5],['🩺 Santé',7]]},
+ {id:'livingGrid',base:.0625,items:[['🍽 Nourriture & boissons',35],['🧴 Hygiène & soins personnels',18],['👕 Vêtements & chaussures',12],['📱 Téléphone & Internet',10],['🚶 Transports non remboursés',10],['🎉 Détente / loisirs',5],['⚠️ Petits besoins imprévus',10]]},
+ {id:'unexpectedGrid',base:null,items:[['💰 Épargne / investissement',40],['🏠 Objectifs importants',30],['🎁 Famille / générosité',10],['🎉 Détente / plaisir',10],['⚠️ Épargne sécurité',10]]}
+];
+const $=id=>document.getElementById(id);
+const val=id=>Math.max(0,Number($(id).value)||0);
+const money=n=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(Number.isFinite(n)?n:0)+' '+$('cur').value;
+function cards(id,base,items){const host=$(id);host.replaceChildren();items.forEach(([name,pct])=>{const el=document.createElement('div');el.className='tile';const n=document.createElement('div');n.className='nm';n.textContent=name;const p=document.createElement('div');p.className='pct';p.textContent=pct+' %';const v=document.createElement('div');v.className='val';v.textContent=money(base*pct/100);el.append(n,p,v);host.append(el);});}
+function render(){const x=val('amount');$('mainTotal').textContent=money(x);cards('mainGrid',x,A[0].items);$('investTotal').textContent=money(x*.4);cards('investGrid',x*.4,A[1].items);$('cashTotal').textContent=money(x*.25);cards('cashGrid',x*.25,A[2].items);$('salaryTotal').textContent=money(x*.25);cards('salaryGrid',x*.25,A[3].items);$('livingTotal').textContent=money(x*.0625);cards('livingGrid',x*.0625,A[4].items);$('unexpectedTotal').textContent=money(val('unexpected'));cards('unexpectedGrid',val('unexpected'),A[5].items);}
+$('amount').addEventListener('input',render);$('unexpected').addEventListener('input',render);$('cur').addEventListener('change',render);
+$('reset').addEventListener('click',()=>{$('amount').value='1000000';$('unexpected').value='0';$('cur').value='FCFA';render();});
+$('print').addEventListener('click',()=>window.print());
+$('export').addEventListener('click',()=>{const rows=[['Section','Catégorie','Pourcentage','Montant','Devise']];const x=val('amount'),u=val('unexpected');A.forEach((section,i)=>{const base=i===0?x:i===1?x*.4:i===2?x*.25:i===3?x*.25:i===4?x*.0625:u;section.items.forEach(([name,pct])=>rows.push([section.id,name,pct+'%',(base*pct/100).toFixed(2),$('cur').value]));});const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='kalla-finance.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+render();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+</body></html>
