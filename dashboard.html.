@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KALLA Finance - Tableau de bord</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#f2f4f8;font-family:Arial,sans-serif}
+header{background:#111a2b;padding:22px 16px;border-bottom:1px solid #354157}
+h1{color:#d6b46a;margin:0;font-size:25px}
+h2{color:#d6b46a;font-size:19px}
+header p,.muted{color:#aab6c8;font-size:13px}
+nav{display:flex;gap:8px;padding:14px;flex-wrap:wrap}
+nav a{padding:11px;border:1px solid #526078;border-radius:8px;color:#fff;text-decoration:none}
+nav a:first-child{background:#d6b46a;color:#111827}
+main{max-width:1000px;margin:auto;padding:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.card{background:#151f31;padding:16px;border:1px solid #29364b;border-radius:12px;margin-bottom:14px}
+.label{font-size:13px;color:#aab6c8}
+.value{font-size:21px;font-weight:bold;margin-top:10px;overflow-wrap:anywhere}
+canvas{display:block;width:100%;height:230px}
+button{background:#d6b46a;color:#111827;border:0;padding:12px 16px;border-radius:8px;font-weight:bold}
+footer{text-align:center;padding:24px;color:#aab6c8;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>KALLA Finance</h1>
+<p>Tableau de bord financier</p>
+</header>
+<nav>
+<a href="dashboard.html">Tableau de bord</a>
+<a href="index.html">Gestion financière</a>
+</nav>
+<main>
+<h2>Vue générale</h2>
+<p id="status" class="muted">Chargement des données...</p>
+
+<div class="grid">
+<div class="card">
+<div class="label">Revenus totaux</div>
+<div class="value" id="income">0 FCFA</div>
+</div>
+<div class="card">
+<div class="label">Dépenses totales</div>
+<div class="value" id="expenses">0 FCFA</div>
+</div>
+<div class="card">
+<div class="label">Bénéfice ou perte</div>
+<div class="value" id="profit">0 FCFA</div>
+</div>
+<div class="card">
+<div class="label">Marge bénéficiaire</div>
+<div class="value" id="margin">0 %</div>
+</div>
+<div class="card">
+<div class="label">Dépenses / revenus</div>
+<div class="value" id="expenseRate">0 %</div>
+</div>
+<div class="card">
+<div class="label">Mois enregistrés</div>
+<div class="value" id="months">0</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Comparaison financière</h2>
+<canvas id="chart" aria-label="Graphique des revenus et dépenses"></canvas>
+<p class="muted">Vert : revenus. Rouge : dépenses.</p>
+</div>
+
+<div class="card">
+<h2>Répartition indicative du bénéfice positif</h2>
+<p class="muted">Calcul selon la répartition de référence : dîme 10 %, salaire 25 %, trésorerie 25 %, investissements 40 %.</p>
+<div id="allocation"></div>
+</div>
+
+<button id="refresh" type="button">Actualiser les statistiques</button>
+</main>
+<footer>KALLA Finance — Gestion financière</footer>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat("fr-FR",{maximumFractionDigits:0}).format(n)+" FCFA";
+const percent=n=>n.toLocaleString("fr-FR",{maximumFractionDigits:1})+" %";
+
+function update(){
+let rows=[];
+try{
+const data=JSON.parse(localStorage.getItem("kallaFinanceAnalyticsSimpleV1")||"[]");
+if(Array.isArray(data)) rows=data;
+}catch(e){}
+
+rows=rows.filter(r=>r&&Number.isFinite(Number(r.income))&&Number.isFinite(Number(r.expenses)));
+const income=rows.reduce((s,r)=>s+Math.max(0,Number(r.income)),0);
+const expenses=rows.reduce((s,r)=>s+Math.max(0,Number(r.expenses)),0);
+const profit=income-expenses;
+
+$("income").textContent=money(income);
+$("expenses").textContent=money(expenses);
+$("profit").textContent=money(profit);
+$("profit").style.color=profit<0?"#ff9999":"#6bd5ae";
+$("margin").textContent=percent(income?profit/income*100:0);
+$("expenseRate").textContent=percent(income?expenses/income*100:0);
+$("months").textContent=rows.length;
+
+$("status").textContent=rows.length
+?"Données trouvées dans le navigateur."
+:"Aucune donnée trouvée. Enregistre d'abord tes chiffres dans Analyse financière sur le même navigateur.";
+
+const allocations=[
+["Dîme",10],["Salaire personnel",25],
+["Trésorerie",25],["Fonds d'investissement",40]
+];
+$("allocation").replaceChildren();
+
+allocations.forEach(([name,rate])=>{
+const line=document.createElement("div");
+line.style.cssText="padding:12px 0;border-bottom:1px solid #354157";
+line.textContent=name+" : "+rate+" % — "+money(Math.max(0,profit)*rate/100);
+$("allocation").appendChild(line);
+});
+
+const canvas=$("chart");
+const width=Math.max(260,canvas.parentElement.clientWidth-32);
+const height=230;
+const ratio=window.devicePixelRatio||1;
+canvas.width=width*ratio;
+canvas.height=height*ratio;
+const ctx=canvas.getContext("2d");
+ctx.setTransform(ratio,0,0,ratio,0,0);
+ctx.clearRect(0,0,width,height);
+
+const max=Math.max(income,expenses,1);
+const barWidth=Math.min(65,width/4);
+const chartHeight=145;
+const base=175;
+const x1=width*.28-barWidth/2;
+const x2=width*.72-barWidth/2;
+
+ctx.fillStyle="#6bd5ae";
+ctx.fillRect(x1,base-income/max*chartHeight,barWidth,income/max*chartHeight);
+ctx.fillStyle="#f28d8d";
+ctx.fillRect(x2,base-expenses/max*chartHeight,barWidth,expenses/max*chartHeight);
+
+ctx.fillStyle="#f2f4f8";
+ctx.font="12px Arial";
+ctx.textAlign="center";
+ctx.fillText("Revenus",x1+barWidth/2,200);
+ctx.fillText("Dépenses",x2+barWidth/2,200);
+}
+
+$("refresh").addEventListener("click",update);
+window.addEventListener("resize",update);
+update();
+})();
+</script>
+</body>
+</html>
