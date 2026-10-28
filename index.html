@@ -702,389 +702,353 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 </script>
 </body>
 </html>
-/* Tableau de bord statistique */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 14px 0;
-}
 
-.stat-card {
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--panel2);
-  min-width: 0;
-}
+<!-- KALLA FINANCE : ANALYSE FINANCIERE -->
+<section id="kalla-finance-analytics" style="background:#111a2b;color:#f2f4f8;padding:20px;border-radius:16px;margin:20px 0;font-family:Arial,sans-serif;">
+  <h2 style="color:#d6b46a;">Analyse financière</h2>
+  <p>Enregistre tes revenus et tes dépenses pour suivre tes résultats.</p>
 
-.stat-label {
-  font-size: .82rem;
-  color: var(--muted);
-}
+  <label for="kfa-month">Mois</label>
+  <input id="kfa-month" type="month" style="display:block;padding:10px;margin:8px 0 14px;width:100%;box-sizing:border-box;">
 
-.stat-value {
-  margin-top: 7px;
-  font-weight: 800;
-  font-size: 1.15rem;
-  overflow-wrap: anywhere;
-}
+  <label for="kfa-income">Revenus (FCFA)</label>
+  <input id="kfa-income" type="number" min="0" value="0" style="display:block;padding:10px;margin:8px 0 14px;width:100%;box-sizing:border-box;">
 
-.chart-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 22px;
-  margin-top: 20px;
-}
+  <label for="kfa-expenses">Dépenses (FCFA)</label>
+  <input id="kfa-expenses" type="number" min="0" value="0" style="display:block;padding:10px;margin:8px 0 14px;width:100%;box-sizing:border-box;">
 
-.donut-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 16px;
-}
+  <button id="kfa-save" type="button" style="padding:12px 18px;background:#d6b46a;color:#111a2b;border:0;border-radius:8px;font-weight:bold;">
+    Enregistrer
+  </button>
 
-.donut {
-  width: 210px;
-  height: 210px;
-  max-width: 100%;
-  border-radius: 50%;
-  position: relative;
-  background: var(--panel2);
-}
-
-.donut::after {
-  content: "";
-  position: absolute;
-  inset: 27%;
-  border-radius: 50%;
-  background: var(--panel);
-  border: 1px solid var(--line);
-}
-
-.donut-center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-  text-align: center;
-  pointer-events: none;
-}
-
-.donut-center strong {
-  font-size: .95rem;
-  overflow-wrap: anywhere;
-  max-width: 90%;
-}
-
-.donut-center span {
-  color: var(--muted);
-  font-size: .75rem;
-}
-
-.chart-legend {
-  width: 100%;
-  display: grid;
-  gap: 9px;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: .85rem;
-}
-
-.legend-dot {
-  width: 11px;
-  height: 11px;
-  flex: 0 0 11px;
-  border-radius: 3px;
-}
-
-.legend-name {
-  flex: 1;
-  overflow-wrap: anywhere;
-}
-
-.legend-value {
-  font-weight: 700;
-  text-align: right;
-}
-
-.bar-list {
-  display: grid;
-  gap: 15px;
-  margin-top: 15px;
-}
-
-.bar-row {
-  display: grid;
-  gap: 6px;
-}
-
-.bar-heading {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: .85rem;
-}
-
-.bar-heading span:first-child {
-  overflow-wrap: anywhere;
-}
-
-.bar-track {
-  width: 100%;
-  height: 10px;
-  overflow: hidden;
-  border-radius: 20px;
-  background: var(--panel2);
-}
-
-.bar-fill {
-  height: 100%;
-  width: 0;
-  border-radius: 20px;
-  background: var(--gold);
-  transition: width .25s ease;
-}
-
-.chart-message {
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  color: var(--muted);
-  font-size: .88rem;
-}
-
-@media (min-width: 650px) {
-  .stats-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .chart-layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-  }
-}
-<div class="twocol">
-<section class="card" id="statistics">
-  <h2>Tableau de bord statistique</h2>
-  <p class="muted">
-    Vue d'ensemble des montants calculés à partir de tes paramètres actuels.
-  </p>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Montant disponible</div>
-      <div class="stat-value" id="statAvailable">0 FCFA</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Montant réparti</div>
-      <div class="stat-value" id="statAllocated">0 FCFA</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Écart de répartition</div>
-      <div class="stat-value" id="statDifference">0 FCFA</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Dîme prévue</div>
-      <div class="stat-value" id="statTithe">0 FCFA</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Salaire personnel</div>
-      <div class="stat-value" id="statSalary">0 FCFA</div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Équilibre de la répartition</div>
-      <div class="stat-value" id="statBalance">À vérifier</div>
-    </div>
+  <div style="margin-top:20px;">
+    <p>Revenus totaux : <strong id="kfa-total-income">0 FCFA</strong></p>
+    <p>Dépenses totales : <strong id="kfa-total-expenses">0 FCFA</strong></p>
+    <p>Résultat : <strong id="kfa-total-profit">0 FCFA</strong></p>
   </div>
 
-  <div class="chart-layout">
-    <div>
-      <h2>Répartition du montant disponible</h2>
-
-      <div class="donut-wrap">
-        <div class="donut" id="allocationDonut"
-             role="img"
-             aria-label="Graphique circulaire de la répartition">
-          <div class="donut-center">
-            <strong id="donutTotal">0 FCFA</strong>
-            <span>Montant disponible</span>
-          </div>
-        </div>
-
-        <div class="chart-legend" id="allocationLegend"></div>
-      </div>
-    </div>
-
-    <div>
-      <h2>Comparaison des enveloppes</h2>
-      <div class="bar-list" id="allocationBars"></div>
-    </div>
-  </div>
-
-  <p class="muted" id="chartNotice" aria-live="polite"></p>
+  <h3 style="color:#d6b46a;">Comparaison des montants</h3>
+  <canvas id="kfa-chart" height="220" style="width:100%;"></canvas>
+  <p id="kfa-message" role="status">Saisis tes chiffres pour commencer.</p>
 </section>
-function render() {
-  renderMain();
-  ['invest','cash','salary','living','unexpected'].forEach(renderCards);
-  renderMainEditor();
 
-  renderDashboard();
-}
-loadLocal();
-function renderDashboard() {
-  const amount = num($('amount').value);
-  const allocated = settings.main.reduce(
-    (sum, item) => sum + amount * num(item.pct) / 100,
-    0
-  );
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const key = "kallaFinanceAnalyticsSimpleV1";
+  let data = [];
 
-  const difference = amount - allocated;
-  const sumPct = totalPct(settings.main);
-  const balanced = Math.abs(sumPct - 100) < 0.000001;
+  try {
+    const saved = JSON.parse(localStorage.getItem(key) || "[]");
+    if (Array.isArray(saved)) data = saved;
+  } catch (e) {}
 
-  $('statAvailable').textContent = money(amount);
-  $('statAllocated').textContent = money(allocated);
-  $('statDifference').textContent = money(difference);
+  const money = n => new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 0
+  }).format(n) + " FCFA";
 
-  const tithe = settings.main.find(item => item.id === 'tithe');
-  const salary = settings.main.find(item => item.id === 'salary');
+  const amount = n => Math.max(0, Number(n) || 0);
 
-  $('statTithe').textContent = money(
-    amount * (tithe ? num(tithe.pct) : 0) / 100
-  );
+  $("kfa-month").value = new Date().toISOString().slice(0, 7);
 
-  $('statSalary').textContent = money(
-    amount * (salary ? num(salary.pct) : 0) / 100
-  );
+  function draw() {
+    const income = data.reduce((s, r) => s + r.income, 0);
+    const expenses = data.reduce((s, r) => s + r.expenses, 0);
 
-  $('statBalance').textContent = balanced
-    ? '100 % · Équilibré'
-    : sumPct.toLocaleString('fr-FR') + ' % · À corriger';
+    $("kfa-total-income").textContent = money(income);
+    $("kfa-total-expenses").textContent = money(expenses);
+    $("kfa-total-profit").textContent = money(income - expenses);
 
-  $('statBalance').style.color = balanced
-    ? 'var(--green)'
-    : 'var(--red)';
+    const canvas = $("kfa-chart");
+    const width = Math.max(280, canvas.parentElement.clientWidth - 10);
+    const height = 220;
+    const ratio = window.devicePixelRatio || 1;
 
-  $('donutTotal').textContent = money(amount);
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+    canvas.style.height = height + "px";
 
-  const legend = $('allocationLegend');
-  const donut = $('allocationDonut');
-  const bars = $('allocationBars');
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
 
-  legend.replaceChildren();
-  bars.replaceChildren();
+    const max = Math.max(1, income, expenses);
+    const barWidth = Math.min(70, width / 4);
+    const chartHeight = 145;
 
-  const items = settings.main;
-  const colors = [
-    '#dfbd74',
-    '#79ddb0',
-    '#7299e8',
-    '#c18be8',
-    '#e58b78',
-    '#7bcbd1'
+    ctx.fillStyle = "#6bd5ae";
+    ctx.fillRect(width * 0.28, 25, barWidth, income / max * chartHeight);
+
+    ctx.fillStyle = "#f28d8d";
+    ctx.fillRect(width * 0.62, 25, barWidth, expenses / max * chartHeight);
+
+    ctx.fillStyle = "#f2f4f8";
+    ctx.font = "12px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Revenus", width * 0.28 + barWidth / 2, 195);
+    ctx.fillText("Dépenses", width * 0.62 + barWidth / 2, 195);
+  }
+
+  $("kfa-save").addEventListener("click", function () {
+    const month = $("kfa-month").value;
+
+    if (!month) {
+      $("kfa-message").textContent = "Choisis un mois.";
+      return;
+    }
+
+    const record = {
+      month,
+      income: amount($("kfa-income").value),
+      expenses: amount($("kfa-expenses").value)
+    };
+
+    const index = data.findIndex(r => r.month === month);
+
+    if (index >= 0) data[index] = record;
+    else data.push(record);
+
+    data.sort((a, b) => a.month.localeCompare(b.month));
+
+    try {
+      localStorage.setItem(key, JSON.stringify(data));
+      $("kfa-message").textContent =
+        "Chiffres enregistrés dans ce navigateur.";
+      draw();
+    } catch (e) {
+      $("kfa-message").textContent =
+        "Enregistrement impossible dans ce navigateur.";
+    }
+  });
+
+  $("kfa-month").addEventListener("change", function () {
+    const record = data.find(r => r.month === this.value);
+    $("kfa-income").value = record ? record.income : 0;
+    $("kfa-expenses").value = record ? record.expenses : 0;
+  });
+
+  window.addEventListener("resize", draw);
+  draw();
+})();
+</script>
+
+<!-- KALLA FINANCE : STATISTIQUES ET POURCENTAGES -->
+<section id="kfa2-section" style="background:#111a2b;color:#f2f4f8;padding:20px;border-radius:16px;margin:20px 0;font-family:Arial,sans-serif;">
+  <h2 style="color:#d6b46a;">Statistiques et indicateurs</h2>
+  <p>Indicateurs calculés à partir des revenus et dépenses enregistrés dans Analyse financière.</p>
+
+  <button id="kfa2-refresh" type="button" style="padding:10px 14px;background:#d6b46a;color:#111a2b;border:0;border-radius:8px;font-weight:bold;">
+    Actualiser les statistiques
+  </button>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px;margin-top:18px;">
+    <div style="background:#0a1220;padding:14px;border-radius:10px;">
+      <div style="color:#9aa9bd;font-size:12px;">Marge bénéficiaire</div>
+      <strong id="kfa2-margin" style="display:block;font-size:22px;margin-top:6px;">0 %</strong>
+    </div>
+    <div style="background:#0a1220;padding:14px;border-radius:10px;">
+      <div style="color:#9aa9bd;font-size:12px;">Part des dépenses</div>
+      <strong id="kfa2-expense-rate" style="display:block;font-size:22px;margin-top:6px;">0 %</strong>
+    </div>
+    <div style="background:#0a1220;padding:14px;border-radius:10px;">
+      <div style="color:#9aa9bd;font-size:12px;">Taux de résultat</div>
+      <strong id="kfa2-result-rate" style="display:block;font-size:22px;margin-top:6px;">0 %</strong>
+    </div>
+    <div style="background:#0a1220;padding:14px;border-radius:10px;">
+      <div style="color:#9aa9bd;font-size:12px;">Mois enregistrés</div>
+      <strong id="kfa2-months" style="display:block;font-size:22px;margin-top:6px;">0</strong>
+    </div>
+  </div>
+
+  <h3 style="color:#d6b46a;margin-top:24px;">Répartition indicative du résultat</h3>
+  <p>Répartition appliquée uniquement si le résultat total est positif. Les pourcentages sont modifiables.</p>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;">
+    <label style="font-size:13px;">Dîme (%)<input id="kfa2-tithe" type="number" min="0" max="100" value="10" style="display:block;width:100%;box-sizing:border-box;padding:9px;margin-top:5px;"></label>
+    <label style="font-size:13px;">Salaire (%)<input id="kfa2-salary" type="number" min="0" max="100" value="25" style="display:block;width:100%;box-sizing:border-box;padding:9px;margin-top:5px;"></label>
+    <label style="font-size:13px;">Trésorerie (%)<input id="kfa2-treasury" type="number" min="0" max="100" value="25" style="display:block;width:100%;box-sizing:border-box;padding:9px;margin-top:5px;"></label>
+    <label style="font-size:13px;">Investissement (%)<input id="kfa2-invest" type="number" min="0" max="100" value="40" style="display:block;width:100%;box-sizing:border-box;padding:9px;margin-top:5px;"></label>
+  </div>
+
+  <p id="kfa2-allocation-check" role="status" style="font-weight:bold;margin-top:12px;">Total de la répartition : 100 %</p>
+
+  <div id="kfa2-allocation-results" style="display:grid;gap:8px;margin-top:12px;"></div>
+
+  <canvas id="kfa2-pie" aria-label="Graphique circulaire de la répartition du résultat" style="display:block;width:100%;max-width:360px;height:280px;margin:20px auto;"></canvas>
+
+  <p id="kfa2-status" role="status" style="color:#9aa9bd;font-size:12px;"></p>
+</section>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const storageKey = "kallaFinanceAnalyticsSimpleV1";
+  const allocationKey = "kallaFinanceAllocationV1";
+
+  const categories = [
+    { id: "kfa2-tithe", name: "Dîme" },
+    { id: "kfa2-salary", name: "Salaire personnel" },
+    { id: "kfa2-treasury", name: "Trésorerie" },
+    { id: "kfa2-invest", name: "Fonds d’investissement" }
   ];
 
-  const totalPctValue = items.reduce(
-    (sum, item) => sum + num(item.pct),
-    0
-  );
+  const colors = ["#d6b46a", "#6bd5ae", "#6c9de8", "#bd8ce0"];
 
-  if (items.length === 0 || totalPctValue <= 0) {
-    donut.style.background = 'var(--panel2)';
-    donut.setAttribute('aria-label', 'Aucune répartition disponible');
-    legend.textContent = 'Ajoute une catégorie avec un pourcentage supérieur à zéro.';
-    bars.textContent = 'Aucune donnée à afficher.';
-    $('chartNotice').textContent =
-      'Les graphiques apparaîtront lorsque des pourcentages seront renseignés.';
-    return;
+  const money = n => new Intl.NumberFormat("fr-FR", {
+    maximumFractionDigits: 0
+  }).format(n) + " FCFA";
+
+  function readRecords() {
+    try {
+      const rows = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      return Array.isArray(rows) ? rows : [];
+    } catch (e) {
+      return [];
+    }
   }
 
-  let currentAngle = 0;
-  const gradients = [];
+  function readAllocation() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(allocationKey) || "null");
+      if (saved && typeof saved === "object") {
+        categories.forEach(c => {
+          if (Number.isFinite(saved[c.id])) $(c.id).value = saved[c.id];
+        });
+      }
+    } catch (e) {}
+  }
 
-  items.forEach((item, index) => {
-    const pct = num(item.pct);
-    const share = pct / totalPctValue * 100;
-    const start = currentAngle;
-    currentAngle += share * 3.6;
+  function allocationValues() {
+    return categories.map(c => ({
+      name: c.name,
+      percent: Math.max(0, Math.min(100, Number($(c.id).value) || 0))
+    }));
+  }
 
-    gradients.push(
-      `${colors[index % colors.length]} ${start}deg ${currentAngle}deg`
+  function drawPie(values) {
+    const canvas = $("kfa2-pie");
+    const width = Math.min(360, canvas.parentElement.clientWidth - 20);
+    const height = 280;
+    const ratio = window.devicePixelRatio || 1;
+
+    canvas.width = Math.max(1, width) * ratio;
+    canvas.height = height * ratio;
+    canvas.style.height = height + "px";
+
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+
+    const total = values.reduce((s, v) => s + v.percent, 0);
+    const cx = width / 2;
+    const cy = 125;
+    const radius = 82;
+
+    if (total <= 0) {
+      ctx.fillStyle = "#9aa9bd";
+      ctx.textAlign = "center";
+      ctx.font = "13px Arial";
+      ctx.fillText("Saisis les pourcentages", cx, cy);
+      return;
+    }
+
+    let angle = -Math.PI / 2;
+
+    values.forEach((v, i) => {
+      if (v.percent <= 0) return;
+      const next = angle + 2 * Math.PI * v.percent / total;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, radius, angle, next);
+      ctx.closePath();
+      ctx.fillStyle = colors[i];
+      ctx.fill();
+      angle = next;
+    });
+
+    ctx.fillStyle = "#f2f4f8";
+    ctx.textAlign = "center";
+    ctx.font = "bold 16px Arial";
+    ctx.fillText(total + " %", cx, cy + 6);
+
+    values.forEach((v, i) => {
+      const y = 235 + i * 12;
+      ctx.fillStyle = colors[i];
+      ctx.fillRect(12, y - 8, 8, 8);
+      ctx.fillStyle = "#f2f4f8";
+      ctx.textAlign = "left";
+      ctx.font = "10px Arial";
+      ctx.fillText(v.name + " : " + v.percent + "%", 26, y);
+    });
+  }
+
+  function render() {
+    const records = readRecords().filter(r =>
+      Number.isFinite(Number(r.income)) &&
+      Number.isFinite(Number(r.expenses))
     );
 
-    const legendItem = document.createElement('div');
-    legendItem.className = 'legend-item';
+    const income = records.reduce((s, r) => s + Math.max(0, Number(r.income)), 0);
+    const expenses = records.reduce((s, r) => s + Math.max(0, Number(r.expenses)), 0);
+    const result = income - expenses;
 
-    const dot = document.createElement('span');
-    dot.className = 'legend-dot';
-    dot.style.background = colors[index % colors.length];
+    $("kfa2-margin").textContent =
+      (income > 0 ? result / income * 100 : 0).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " %";
 
-    const name = document.createElement('span');
-    name.className = 'legend-name';
-    name.textContent = item.name;
+    $("kfa2-expense-rate").textContent =
+      (income > 0 ? expenses / income * 100 : 0).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " %";
 
-    const value = document.createElement('span');
-    value.className = 'legend-value';
-    value.textContent = money(amount * pct / 100);
+    $("kfa2-result-rate").textContent =
+      (income > 0 ? result / income * 100 : 0).toLocaleString("fr-FR", { maximumFractionDigits: 1 }) + " %";
 
-    legendItem.append(dot, name, value);
-    legend.append(legendItem);
+    $("kfa2-months").textContent = records.length;
+
+    const allocation = allocationValues();
+    const allocationTotal = allocation.reduce((s, v) => s + v.percent, 0);
+
+    $("kfa2-allocation-check").textContent =
+      "Total de la répartition : " + allocationTotal + " %" +
+      (allocationTotal === 100 ? " — répartition valide." : " — le total doit être égal à 100 %.");
+
+    const results = $("kfa2-allocation-results");
+    results.replaceChildren();
+
+    allocation.forEach((item, i) => {
+      const line = document.createElement("div");
+      line.style.cssText = "background:#0a1220;padding:12px;border-radius:8px;border-left:4px solid " + colors[i] + ";";
+      const amount = result > 0 ? result * item.percent / 100 : 0;
+      line.textContent = item.name + " — " + item.percent + "% : " + money(amount);
+      results.appendChild(line);
+    });
+
+    drawPie(allocation);
+
+    $("kfa2-status").textContent = records.length
+      ? "Statistiques actualisées à partir des données enregistrées dans Analyse financière. Résultat total : " + money(result) + "."
+      : "Aucune donnée mensuelle enregistrée. Ajoute d’abord des revenus et dépenses dans Analyse financière.";
+  }
+
+  $("kfa2-refresh").addEventListener("click", render);
+
+  categories.forEach(c => {
+    $(c.id).addEventListener("input", () => {
+      const saved = {};
+      categories.forEach(item => {
+        saved[item.id] = Math.max(0, Math.min(100, Number($(item.id).value) || 0));
+      });
+      try {
+        localStorage.setItem(allocationKey, JSON.stringify(saved));
+      } catch (e) {}
+      render();
+    });
   });
 
-  donut.style.background =
-    `conic-gradient(${gradients.join(', ')})`;
+  readAllocation();
+  window.addEventListener("resize", render);
+  render();
+})();
+</script>
 
-  donut.setAttribute(
-    'aria-label',
-    'Répartition proportionnelle des enveloppes financières'
-  );
 
-  const maxPct = Math.max(...items.map(item => num(item.pct)), 1);
 
-  items.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'bar-row';
 
-    const heading = document.createElement('div');
-    heading.className = 'bar-heading';
-
-    const label = document.createElement('span');
-    label.textContent = item.name;
-
-    const value = document.createElement('strong');
-    value.textContent = money(amount * num(item.pct) / 100);
-
-    heading.append(label, value);
-
-    const track = document.createElement('div');
-    track.className = 'bar-track';
-
-    const fill = document.createElement('div');
-    fill.className = 'bar-fill';
-    fill.style.width = (num(item.pct) / maxPct * 100) + '%';
-
-    track.append(fill);
-    row.append(heading, track);
-    bars.append(row);
-  });
-
-  $('chartNotice').textContent = balanced
-    ? 'Les enveloppes totalisent 100 %. Les graphiques reflètent les pourcentages actuellement enregistrés.'
-    : 'Attention : les enveloppes totalisent ' +
-      sumPct.toLocaleString('fr-FR') +
-      ' %. Le graphique circulaire compare les proportions entre enveloppes, mais la répartition globale doit être corrigée.';
-}
