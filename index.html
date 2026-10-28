@@ -5,63 +5,1086 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b1020">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="KALLA Finance">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <title>KALLA Finance</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#131d31;--panel2:#1b2942;--text:#f4f7ff;--muted:#b0bdd2;--gold:#dfbd74;--line:#31415f;--green:#79ddb0}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding-bottom:30px}
-header{padding:25px 17px 15px;max-width:900px;margin:auto}.brand{font-size:.75rem;letter-spacing:.15em;font-weight:800;color:var(--gold)}h1{font-size:2rem;line-height:1.1;margin:9px 0}p{color:var(--muted);margin:7px 0 14px}
-main{max-width:900px;margin:auto;padding:0 12px}.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;margin:13px 0}h2{font-size:1.16rem;margin:0 0 8px}label{display:block;color:var(--muted);font-size:.9rem;margin:10px 0 6px}
-input,select,button{font:inherit;border-radius:11px}input,select{width:100%;padding:13px;background:#0b1324;border:1px solid var(--line);color:var(--text)}button{padding:12px 14px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;font-weight:650}.primary{background:var(--gold);color:#19150c;border-color:var(--gold)}
-.row{display:flex;gap:12px}.row>*{flex:1;min-width:0}.big{font-size:1.75rem;font-weight:850;color:var(--green);overflow-wrap:anywhere;margin:12px 0}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.tile{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px;min-width:0}.tile .nm{font-size:.86rem;color:var(--muted)}.tile .pct{font-size:.77rem;color:var(--gold);margin:3px 0}.tile .val{font-weight:800;overflow-wrap:anywhere}
-.total{border-top:1px solid var(--line);margin-top:13px;padding-top:12px;display:flex;justify-content:space-between;gap:12px;font-weight:800}.note{font-size:.88rem;background:#29251c;border-left:3px solid var(--gold);padding:12px;border-radius:8px;color:#f0e5c9}.muted{color:var(--muted);font-size:.86rem}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.actions button{flex:1}
-footer{max-width:900px;margin:auto;padding:10px 17px;color:var(--muted);font-size:.8rem}
-@media(min-width:650px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px}}
+:root {
+  color-scheme: dark;
+  --bg:#0b1020;
+  --panel:#131d31;
+  --panel2:#1b2942;
+  --text:#f4f7ff;
+  --muted:#b0bdd2;
+  --gold:#dfbd74;
+  --line:#31415f;
+  --green:#79ddb0;
+  --red:#ff9c9c;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  padding-bottom:32px;
+  background:var(--bg);
+  color:var(--text);
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+header,main,footer { max-width:1100px; margin:auto; }
+header { padding:26px 16px 12px; }
+main { padding:0 12px; }
+.brand {
+  color:var(--gold);
+  font-size:.76rem;
+  font-weight:800;
+  letter-spacing:.16em;
+}
+h1 { font-size:clamp(1.8rem,5vw,2.5rem); line-height:1.15; margin:10px 0; }
+h2 { font-size:1.12rem; margin:0 0 10px; }
+p { color:var(--muted); margin:6px 0 14px; }
+.card {
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:17px;
+  margin:13px 0;
+  min-width:0;
+}
+label { display:block; color:var(--muted); font-size:.88rem; margin:9px 0 5px; }
+input,select,button {
+  font:inherit;
+  border-radius:10px;
+}
+input,select {
+  min-width:0;
+  width:100%;
+  padding:11px;
+  color:var(--text);
+  background:#0b1324;
+  border:1px solid var(--line);
+}
+button {
+  padding:11px 13px;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  cursor:pointer;
+  font-weight:650;
+}
+button:focus-visible,input:focus-visible,select:focus-visible {
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
+.primary { background:var(--gold); color:#19150c; border-color:var(--gold); }
+.danger { color:var(--red); }
+.row { display:flex; gap:12px; align-items:end; }
+.row>* { flex:1; min-width:0; }
+.big {
+  font-size:clamp(1.5rem,5vw,2rem);
+  font-weight:850;
+  color:var(--green);
+  overflow-wrap:anywhere;
+  margin:12px 0;
+}
+.grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.tile {
+  min-width:0;
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:12px;
+}
+.tile .nm { color:var(--muted); font-size:.86rem; overflow-wrap:anywhere; }
+.tile .pct { color:var(--gold); font-size:.8rem; margin:4px 0; }
+.tile .val { font-weight:800; overflow-wrap:anywhere; }
+.twocol { display:grid; gap:12px; }
+.actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.actions button { flex:1 1 140px; }
+.note {
+  padding:12px;
+  border-left:3px solid var(--gold);
+  background:#29251c;
+  border-radius:7px;
+  color:#f0e5c9;
+}
+.muted { color:var(--muted); font-size:.87rem; }
+.status { font-size:.85rem; margin-top:8px; }
+.status.good { color:var(--green); }
+.status.bad { color:var(--red); }
+.section-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.category {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 90px auto;
+  gap:8px;
+  align-items:end;
+  padding:10px 0;
+  border-bottom:1px solid var(--line);
+}
+.category:last-child { border-bottom:0; }
+.category label { margin-top:0; }
+.category button { padding:10px; }
+.editor { margin-top:12px; }
+footer { padding:12px 17px; font-size:.8rem; color:var(--muted); }
+@media(min-width:650px) {
+  .grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .twocol { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:390px) {
+  .category { grid-template-columns:minmax(0,1fr) 76px auto; gap:5px; }
+  .category input { padding:9px 7px; font-size:.86rem; }
+  .category button { padding:9px 7px; font-size:.8rem; }
+  .card { padding:13px; }
+}
+@media print {
+  :root { color-scheme:light; }
+  body { background:white; color:#111; }
+  .card { background:white; border:1px solid #ccc; break-inside:avoid; }
+  p,.muted,.tile .nm,footer { color:#444; }
+  input,select,button,.editor,.actions { display:none!important; }
+  .tile { background:#f5f5f5; border-color:#ddd; }
+  .tile .pct { color:#72551c; }
+  .big { color:#176d48; }
+  .note { background:#fff8e9; color:#222; }
+}
 </style>
 </head>
 <body>
-<header><div class="brand">KALLA GROUP · FINANCE</div><h1>Gestionnaire financier</h1><p>Change le montant principal : toutes les enveloppes et sous-répartitions se recalculent automatiquement.</p></header>
+<header>
+  <div class="brand">KALLA GROUP · FINANCE</div>
+  <h1>Gestionnaire financier</h1>
+  <p>Organise tes enveloppes financières, adapte tes pourcentages et conserve tes réglages sur cet appareil.</p>
+</header>
+
 <main>
 <section class="card">
-<h2>1. Montant principal distribuable</h2>
-<p class="muted">Saisis le montant après dépenses professionnelles, dettes et provisions fiscales nécessaires.</p>
-<div class="row"><div><label for="amount">Montant</label><input id="amount" type="number" min="0" step="any" inputmode="decimal" value="1000000"></div><div style="max-width:130px"><label for="cur">Devise</label><select id="cur"><option>FCFA</option><option>EUR</option><option>RMB</option></select></div></div>
-<div class="big" id="mainTotal"></div><div class="grid" id="mainGrid"></div>
-<div class="actions"><button class="primary" id="export">Exporter CSV</button><button id="print">Imprimer / PDF</button><button id="reset">Réinitialiser</button></div>
+  <h2>1. Montant distribuable</h2>
+  <p class="muted">Indique ici le bénéfice net réellement disponible après les charges professionnelles, dettes et provisions nécessaires. Ce montant ne remplace pas un compte de résultat complet.</p>
+  <div class="row">
+    <div>
+      <label for="amount">Montant disponible</label>
+      <input id="amount" type="number" min="0" step="any" inputmode="decimal" value="1000000">
+    </div>
+    <div style="max-width:135px">
+      <label for="cur">Devise</label>
+      <select id="cur">
+        <option value="FCFA">FCFA</option>
+        <option value="EUR">EUR</option>
+        <option value="RMB">RMB</option>
+      </select>
+    </div>
+  </div>
+  <div class="big" id="mainTotal">1 000 000 FCFA</div>
+  <div id="mainGrid" class="grid"></div>
+  <div id="mainStatus" class="status"></div>
+  <div class="actions">
+    <button class="primary" id="exportCsv">Exporter CSV</button>
+    <button id="exportJson">Sauvegarder les réglages</button>
+    <button id="importButton">Importer les réglages</button>
+    <button id="print">Imprimer / PDF</button>
+    <button id="reset">Réinitialiser</button>
+    <input id="importFile" type="file" accept=".json,application/json" hidden>
+  </div>
+  <p class="muted">Les réglages sont sauvegardés dans le stockage local de ce navigateur. Ils ne sont pas automatiquement synchronisés avec tes autres appareils.</p>
 </section>
+
 <div class="twocol">
-<section class="card"><h2>2. Fonds d’investissement · 40 %</h2><div class="big" id="investTotal"></div><div class="grid" id="investGrid"></div></section>
-<section class="card"><h2>3. Trésorerie · 25 %</h2><div class="big" id="cashTotal"></div><div class="grid" id="cashGrid"></div></section>
+  <section class="card">
+    <div class="section-head">
+      <h2>2. Fonds d’investissement</h2>
+      <button data-edit="invest">Modifier</button>
+    </div>
+    <div class="big" id="investTotal"></div>
+    <div class="grid" id="investGrid"></div>
+    <div id="investStatus" class="status"></div>
+    <div id="investEditor" class="editor" hidden></div>
+  </section>
+
+  <section class="card">
+    <div class="section-head">
+      <h2>3. Trésorerie entreprise</h2>
+      <button data-edit="cash">Modifier</button>
+    </div>
+    <div class="big" id="cashTotal"></div>
+    <div class="grid" id="cashGrid"></div>
+    <div id="cashStatus" class="status"></div>
+    <div id="cashEditor" class="editor" hidden></div>
+  </section>
 </div>
-<section class="card"><h2>4. Salaire personnel · 25 %</h2><div class="big" id="salaryTotal"></div><div class="grid" id="salaryGrid"></div></section>
-<section class="card"><h2>5. Vie courante · 25 % du salaire</h2><p class="muted">Cette enveloppe est calculée automatiquement à partir de la catégorie « Vie courante ».</p><div class="big" id="livingTotal"></div><div class="grid" id="livingGrid"></div></section>
-<section class="card"><h2>6. Revenu imprévu personnel</h2><p class="muted">Calcul indépendant pour un revenu exceptionnel personnel net.</p><label for="unexpected">Montant du revenu imprévu</label><input id="unexpected" type="number" min="0" step="any" inputmode="decimal" value="0"><div class="big" id="unexpectedTotal"></div><div class="grid" id="unexpectedGrid"></div></section>
-<section class="card"><h2>À retenir</h2><div class="note"><b>Dîme :</b> ici, elle est calculée sur le montant principal. Si tu veux la prélever sur ton salaire personnel, ne la prélève pas une seconde fois sur le montant principal.</div><p class="muted">Le calculateur répartit les montants mais ne vérifie pas tes obligations fiscales ou les sommes dues aux fournisseurs. Il fonctionne localement dans le navigateur. Pour l’installer comme une application iPhone, il doit être publié sur une adresse HTTPS, puis ajouté à l’écran d’accueil.</p></section>
-</main><footer>KALLA Finance · Version 1.0 · Les données ne sont pas envoyées à un serveur.</footer>
+
+<section class="card">
+  <div class="section-head">
+    <h2>4. Salaire personnel</h2>
+    <button data-edit="salary">Modifier</button>
+  </div>
+  <div class="big" id="salaryTotal"></div>
+  <div class="grid" id="salaryGrid"></div>
+  <div id="salaryStatus" class="status"></div>
+  <div id="salaryEditor" class="editor" hidden></div>
+</section>
+
+<section class="card">
+  <div class="section-head">
+    <h2>5. Budget vie courante</h2>
+    <button data-edit="living">Modifier</button>
+  </div>
+  <p class="muted">Cette enveloppe est calculée à partir de la catégorie « Vie courante » de ton salaire personnel.</p>
+  <div class="big" id="livingTotal"></div>
+  <div class="grid" id="livingGrid"></div>
+  <div id="livingStatus" class="status"></div>
+  <div id="livingEditor" class="editor" hidden></div>
+</section>
+
+<section class="card">
+  <div class="section-head">
+    <h2>6. Revenu personnel exceptionnel</h2>
+    <button data-edit="unexpected">Modifier</button>
+  </div>
+  <label for="unexpected">Montant net exceptionnel</label>
+  <input id="unexpected" type="number" min="0" step="any" inputmode="decimal" value="0">
+  <div class="big" id="unexpectedTotal"></div>
+  <div class="grid" id="unexpectedGrid"></div>
+  <div id="unexpectedStatus" class="status"></div>
+  <div id="unexpectedEditor" class="editor" hidden></div>
+</section>
+
+<section class="card">
+  <h2>7. Répartition principale</h2>
+  <p class="muted">Modifie ici les pourcentages de la dîme, du salaire personnel, de la trésorerie et de l’investissement.</p>
+  <div id="mainEditor" class="editor"></div>
+  <div class="actions">
+    <button class="primary" id="saveSettings">Enregistrer les réglages</button>
+  </div>
+  <div id="saveStatus" class="status" aria-live="polite"></div>
+</section>
+
+<section class="card">
+  <h2>Principes de gestion</h2>
+  <div class="note">
+    La dîme est calculée ici sur le montant distribuable. Si tu choisis de la prélever uniquement sur ton salaire personnel, adapte la répartition pour ne pas la compter deux fois.
+  </div>
+  <p class="muted">Les salaires des employés et les prestataires payés au titre des charges d’exploitation doivent être enregistrés dans les charges avant de calculer le bénéfice distribuable. Ne les déduis pas une seconde fois de ce bénéfice. La répartition proposée est un outil de planification, pas un avis fiscal ou comptable.</p>
+  <p class="muted">Pour un usage à plusieurs utilisateurs, avec des comptes et une synchronisation sécurisée, il faudra ensuite ajouter une authentification et une base de données avec des règles d’accès adaptées.</p>
+</section>
+</main>
+
+<footer>KALLA Finance · Outil de planification financière · Les données restent dans le navigateur sur cet appareil.</footer>
+
 <script>
 'use strict';
-const A=[
- {id:'mainGrid',base:1,items:[['✝️ Dîme',10],['💼 Salaire personnel',25],['🏦 Trésorerie entreprise',25],['🚀 Fonds d’investissement',40]]},
- {id:'investGrid',base:.4,items:[['💼 Business',35],['🏢 Immobilier',25],['📈 Placements financiers',15],['✈️ Voyages commerciaux',10],['⚙️ Matériel / équipements',10],['🎓 Formations professionnelles',5]]},
- {id:'cashGrid',base:.25,items:[['💵 Fonds de roulement',35],['📦 Stock / marchandises',20],['🧾 Charges & impôts',15],['👨‍💼 Salaires & prestataires',10],['⚠️ Réserve d’urgence',10],['🛠️ Maintenance & réparations',5],['💻 Outils & logiciels',5]]},
- {id:'salaryGrid',base:.25,items:[['🍽 Vie courante',25],['🏠 Logement',18],['🚗 Voiture',8],['💍 Mariage',8],['🏡 Maison long terme',12],['🎁 Famille / imprévus',7],['💰 Épargne sécurité',5],['🎉 Détente / plaisir',5],['👶 Épargne enfants',5],['🩺 Santé',7]]},
- {id:'livingGrid',base:.0625,items:[['🍽 Nourriture & boissons',35],['🧴 Hygiène & soins personnels',18],['👕 Vêtements & chaussures',12],['📱 Téléphone & Internet',10],['🚶 Transports non remboursés',10],['🎉 Détente / loisirs',5],['⚠️ Petits besoins imprévus',10]]},
- {id:'unexpectedGrid',base:null,items:[['💰 Épargne / investissement',40],['🏠 Objectifs importants',30],['🎁 Famille / générosité',10],['🎉 Détente / plaisir',10],['⚠️ Épargne sécurité',10]]}
-];
-const $=id=>document.getElementById(id);
-const val=id=>Math.max(0,Number($(id).value)||0);
-const money=n=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:2}).format(Number.isFinite(n)?n:0)+' '+$('cur').value;
-function cards(id,base,items){const host=$(id);host.replaceChildren();items.forEach(([name,pct])=>{const el=document.createElement('div');el.className='tile';const n=document.createElement('div');n.className='nm';n.textContent=name;const p=document.createElement('div');p.className='pct';p.textContent=pct+' %';const v=document.createElement('div');v.className='val';v.textContent=money(base*pct/100);el.append(n,p,v);host.append(el);});}
-function render(){const x=val('amount');$('mainTotal').textContent=money(x);cards('mainGrid',x,A[0].items);$('investTotal').textContent=money(x*.4);cards('investGrid',x*.4,A[1].items);$('cashTotal').textContent=money(x*.25);cards('cashGrid',x*.25,A[2].items);$('salaryTotal').textContent=money(x*.25);cards('salaryGrid',x*.25,A[3].items);$('livingTotal').textContent=money(x*.0625);cards('livingGrid',x*.0625,A[4].items);$('unexpectedTotal').textContent=money(val('unexpected'));cards('unexpectedGrid',val('unexpected'),A[5].items);}
-$('amount').addEventListener('input',render);$('unexpected').addEventListener('input',render);$('cur').addEventListener('change',render);
-$('reset').addEventListener('click',()=>{$('amount').value='1000000';$('unexpected').value='0';$('cur').value='FCFA';render();});
-$('print').addEventListener('click',()=>window.print());
-$('export').addEventListener('click',()=>{const rows=[['Section','Catégorie','Pourcentage','Montant','Devise']];const x=val('amount'),u=val('unexpected');A.forEach((section,i)=>{const base=i===0?x:i===1?x*.4:i===2?x*.25:i===3?x*.25:i===4?x*.0625:u;section.items.forEach(([name,pct])=>rows.push([section.id,name,pct+'%',(base*pct/100).toFixed(2),$('cur').value]));});const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='kalla-finance.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+
+const STORAGE_KEY = 'kalla-finance-settings-v2';
+
+const DEFAULTS = {
+  currency: 'FCFA',
+  amount: 1000000,
+  unexpectedAmount: 0,
+  main: [
+    {id:'tithe', name:'Dîme', pct:10},
+    {id:'salary', name:'Salaire personnel', pct:25},
+    {id:'cash', name:'Trésorerie entreprise', pct:25},
+    {id:'invest', name:'Fonds d’investissement', pct:40}
+  ],
+  invest: [
+    {id:'i1', name:'Business', pct:35},
+    {id:'i2', name:'Immobilier', pct:25},
+    {id:'i3', name:'Placements financiers', pct:15},
+    {id:'i4', name:'Voyages commerciaux', pct:10},
+    {id:'i5', name:'Matériel et équipements', pct:10},
+    {id:'i6', name:'Formations professionnelles', pct:5}
+  ],
+  cash: [
+    {id:'c1', name:'Fonds de roulement', pct:35},
+    {id:'c2', name:'Stock et marchandises', pct:20},
+    {id:'c3', name:'Charges et impôts futurs', pct:15},
+    {id:'c4', name:'Salaires et prestataires à venir', pct:10},
+    {id:'c5', name:'Réserve d’urgence', pct:10},
+    {id:'c6', name:'Maintenance et réparations', pct:5},
+    {id:'c7', name:'Outils et logiciels', pct:5}
+  ],
+  salary: [
+    {id:'s1', name:'Vie courante', pct:25},
+    {id:'s2', name:'Logement', pct:18},
+    {id:'s3', name:'Voiture', pct:8},
+    {id:'s4', name:'Mariage', pct:8},
+    {id:'s5', name:'Maison à long terme', pct:12},
+    {id:'s6', name:'Famille et imprévus', pct:7},
+    {id:'s7', name:'Épargne de sécurité', pct:5},
+    {id:'s8', name:'Détente et loisirs', pct:5},
+    {id:'s9', name:'Épargne enfants', pct:5},
+    {id:'s10', name:'Santé', pct:7}
+  ],
+  living: [
+    {id:'l1', name:'Nourriture et boissons', pct:35},
+    {id:'l2', name:'Hygiène et soins', pct:18},
+    {id:'l3', name:'Vêtements et chaussures', pct:12},
+    {id:'l4', name:'Téléphone et Internet', pct:10},
+    {id:'l5', name:'Transports non remboursés', pct:10},
+    {id:'l6', name:'Détente et loisirs', pct:5},
+    {id:'l7', name:'Petits besoins imprévus', pct:10}
+  ],
+  unexpected: [
+    {id:'u1', name:'Épargne et investissement', pct:40},
+    {id:'u2', name:'Objectifs importants', pct:30},
+    {id:'u3', name:'Famille et générosité', pct:10},
+    {id:'u4', name:'Détente et loisirs', pct:10},
+    {id:'u5', name:'Épargne de sécurité', pct:10}
+  ]
+};
+
+let settings = structuredClone(DEFAULTS);
+const $ = id => document.getElementById(id);
+
+function num(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+}
+function currency() {
+  return $('cur').value;
+}
+function money(value) {
+  return new Intl.NumberFormat('fr-FR', {
+    maximumFractionDigits:2
+  }).format(Number.isFinite(value) ? value : 0) + ' ' + currency();
+}
+function totalPct(items) {
+  return items.reduce((sum, item) => sum + num(item.pct), 0);
+}
+function mainPct(id) {
+  const item = settings.main.find(x => x.id === id);
+  return item ? num(item.pct) : 0;
+}
+function baseFor(key) {
+  const amount = num($('amount').value);
+  if (key === 'invest') return amount * mainPct('invest') / 100;
+  if (key === 'cash') return amount * mainPct('cash') / 100;
+  if (key === 'salary') return amount * mainPct('salary') / 100;
+  if (key === 'living') {
+    const salary = settings.salary.find(x => x.name === 'Vie courante');
+    return baseFor('salary') * (salary ? num(salary.pct) : 0) / 100;
+  }
+  if (key === 'unexpected') return num($('unexpected').value);
+  return amount;
+}
+function statusMessage(elementId, items) {
+  const sum = totalPct(items);
+  const el = $(elementId);
+  const valid = Math.abs(sum - 100) < 0.000001;
+  el.className = 'status ' + (valid ? 'good' : 'bad');
+  el.textContent = valid
+    ? 'Répartition équilibrée : 100 %.'
+    : 'Attention : total actuel ' + sum.toLocaleString('fr-FR') +
+      ' %. Ajuste les pourcentages pour atteindre 100 %.';
+}
+function renderCards(key) {
+  const items = settings[key];
+  const host = $(key + 'Grid');
+  host.replaceChildren();
+
+  const base = baseFor(key);
+  for (const item of items) {
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+
+    const name = document.createElement('div');
+    name.className = 'nm';
+    name.textContent = item.name;
+
+    const pct = document.createElement('div');
+    pct.className = 'pct';
+    pct.textContent = num(item.pct).toLocaleString('fr-FR') + ' %';
+
+    const value = document.createElement('div');
+    value.className = 'val';
+    value.textContent = money(base * num(item.pct) / 100);
+
+    tile.append(name, pct, value);
+    host.append(tile);
+  }
+
+  statusMessage(key + 'Status', items);
+}
+function renderMain() {
+  const amount = num($('amount').value);
+  $('mainTotal').textContent = money(amount);
+  const host = $('mainGrid');
+  host.replaceChildren();
+
+  for (const item of settings.main) {
+    const tile = document.createElement('div');
+    tile.className = 'tile';
+
+    const name = document.createElement('div');
+    name.className = 'nm';
+    name.textContent = item.name;
+
+    const pct = document.createElement('div');
+    pct.className = 'pct';
+    pct.textContent = num(item.pct).toLocaleString('fr-FR') + ' %';
+
+    const value = document.createElement('div');
+    value.className = 'val';
+    value.textContent = money(amount * num(item.pct) / 100);
+
+    tile.append(name, pct, value);
+    host.append(tile);
+  }
+  statusMessage('mainStatus', settings.main);
+}
+function render() {
+  $('investTotal').textContent = money(baseFor('invest'));
+  $('cashTotal').textContent = money(baseFor('cash'));
+  $('salaryTotal').textContent = money(baseFor('salary'));
+  $('livingTotal').textContent = money(baseFor('living'));
+  $('unexpectedTotal').textContent = money(baseFor('unexpected'));
+
+  renderMain();
+  ['invest','cash','salary','living','unexpected'].forEach(renderCards);
+  renderMainEditor();
+}
+function saveLocal() {
+  try {
+    settings.currency = currency();
+    settings.amount = num($('amount').value);
+    settings.unexpectedAmount = num($('unexpected').value);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    $('saveStatus').textContent = 'Réglages enregistrés sur cet appareil.';
+    $('saveStatus').className = 'status good';
+  } catch (error) {
+    $('saveStatus').textContent = 'Impossible de sauvegarder. Vérifie le stockage du navigateur.';
+    $('saveStatus').className = 'status bad';
+  }
+}
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object') return;
+
+    for (const key of ['main','invest','cash','salary','living','unexpected']) {
+      if (Array.isArray(saved[key])) {
+        settings[key] = saved[key]
+          .filter(x => x && typeof x.name === 'string')
+          .map((x, i) => ({
+            id: String(x.id || key + i),
+            name: String(x.name).slice(0,100),
+            pct: Math.max(0, Math.min(100, Number(x.pct) || 0))
+          }));
+      }
+    }
+    if (['FCFA','EUR','RMB'].includes(saved.currency)) {
+      $('cur').value = saved.currency;
+    }
+    if (Number.isFinite(Number(saved.amount))) $('amount').value = Math.max(0,Number(saved.amount));
+    if (Number.isFinite(Number(saved.unexpectedAmount))) $('unexpected').value = Math.max(0,Number(saved.unexpectedAmount));
+  } catch (error) {
+    console.warn('Les réglages locaux n’ont pas pu être chargés.');
+  }
+}
+function renderEditor(key, container) {
+  container.replaceChildren();
+
+  const items = settings[key];
+  items.forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = 'category';
+
+    const nameWrap = document.createElement('div');
+    const nameLabel = document.createElement('label');
+    nameLabel.textContent = 'Catégorie ' + (index + 1);
+    const nameInput = document.createElement('input');
+    nameInput.value = item.name;
+    nameInput.maxLength = 100;
+    nameInput.setAttribute('aria-label','Nom de la catégorie ' + (index + 1));
+    nameInput.addEventListener('change', () => {
+      const newName = nameInput.value.trim();
+      if (!newName) {
+        nameInput.value = item.name;
+        return;
+      }
+      item.name = newName;
+      render();
+      saveLocal();
+      renderEditor(key, container);
+    });
+    nameWrap.append(nameLabel, nameInput);
+
+    const pctWrap = document.createElement('div');
+    const pctLabel = document.createElement('label');
+    pctLabel.textContent = '%';
+    const pctInput = document.createElement('input');
+    pctInput.type = 'number';
+    pctInput.min = '0';
+    pctInput.max = '100';
+    pctInput.step = 'any';
+    pctInput.value = item.pct;
+    pctInput.setAttribute('aria-label','Pourcentage de ' + item.name);
+    pctInput.addEventListener('change', () => {
+      item.pct = Math.max(0, Math.min(100, Number(pctInput.value) || 0));
+      render();
+      saveLocal();
+      renderEditor(key, container);
+    });
+    pctWrap.append(pctLabel, pctInput);
+
+    const removeWrap = document.createElement('div');
+    const removeLabel = document.createElement('label');
+    removeLabel.textContent = 'Action';
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = 'Retirer';
+    remove.className = 'danger';
+    remove.addEventListener('click', () => {
+      if (items.length <= 1) {
+        alert('Garde au moins une catégorie.');
+        return;
+      }
+      if (!confirm('Retirer cette catégorie de la répartition ? Les autres pourcentages ne seront pas redistribués automatiquement.')) return;
+      settings[key] = items.filter(x => x.id !== item.id);
+      render();
+      saveLocal();
+      renderEditor(key, container);
+    });
+    removeWrap.append(removeLabel, remove);
+
+    row.append(nameWrap, pctWrap, removeWrap);
+    container.append(row);
+  });
+
+  const add = document.createElement('button');
+  add.type = 'button';
+  add.className = 'primary';
+  add.textContent = 'Ajouter une catégorie';
+  add.addEventListener('click', () => {
+    settings[key].push({
+      id: key + '-' + Date.now() + '-' + Math.floor(Math.random()*10000),
+      name: 'Nouvelle catégorie',
+      pct: 0
+    });
+    render();
+    saveLocal();
+    renderEditor(key, container);
+  });
+  container.append(add);
+}
+function renderMainEditor() {
+  const host = $('mainEditor');
+  host.replaceChildren();
+  renderEditor('main', host);
+}
+function openEditor(key) {
+  const panel = $(key + 'Editor');
+  const isHidden = panel.hidden;
+  panel.hidden = !isHidden;
+  if (isHidden) renderEditor(key, panel);
+}
+function csvEscape(value) {
+  return '"' + String(value).replace(/"/g,'""') + '"';
+}
+function exportCsv() {
+  const rows = [['Section','Catégorie','Pourcentage','Base','Montant calculé','Devise']];
+  const amount = num($('amount').value);
+
+  settings.main.forEach(item => {
+    rows.push(['Répartition principale',item.name,item.pct,amount,
+      amount * num(item.pct)/100,currency()]);
+  });
+
+  ['invest','cash','salary','living','unexpected'].forEach(key => {
+    const base = baseFor(key);
+    settings[key].forEach(item => {
+      rows.push([key,item.name,item.pct,base,base*num(item.pct)/100,currency()]);
+    });
+  });
+
+  const csv = '\ufeff' + rows.map(row => row.map(csvEscape).join(';')).join('\r\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+  download(blob,'kalla-finance.csv');
+}
+function download(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url),1000);
+}
+function exportJson() {
+  const data = {
+    ...settings,
+    currency:currency(),
+    amount:num($('amount').value),
+    unexpectedAmount:num($('unexpected').value)
+  };
+  download(
+    new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),
+    'kalla-finance-reglages.json'
+  );
+}
+function importJson(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      const keys = ['main','invest','cash','salary','living','unexpected'];
+      for (const key of keys) {
+        if (!Array.isArray(data[key]) || !data[key].length) {
+          throw new Error('Structure invalide');
+        }
+        settings[key] = data[key].map((item,index) => ({
+          id:String(item.id || key + index),
+          name:String(item.name || 'Catégorie').slice(0,100),
+          pct:Math.max(0,Math.min(100,Number(item.pct)||0))
+        }));
+      }
+      if (['FCFA','EUR','RMB'].includes(data.currency)) $('cur').value = data.currency;
+      $('amount').value = Math.max(0,Number(data.amount)||0);
+      $('unexpected').value = Math.max(0,Number(data.unexpectedAmount)||0);
+      render();
+      saveLocal();
+      alert('Réglages importés.');
+    } catch (error) {
+      alert('Fichier invalide. Choisis un fichier JSON exporté par KALLA Finance.');
+    }
+  };
+  reader.readAsText(file);
+}
+
+$('amount').addEventListener('input',() => {render();saveLocal();});
+$('unexpected').addEventListener('input',() => {render();saveLocal();});
+$('cur').addEventListener('change',() => {render();saveLocal();});
+
+document.querySelectorAll('[data-edit]').forEach(button => {
+  button.addEventListener('click',() => openEditor(button.dataset.edit));
+});
+$('saveSettings').addEventListener('click',saveLocal);
+$('exportCsv').addEventListener('click',exportCsv);
+$('exportJson').addEventListener('click',exportJson);
+$('importButton').addEventListener('click',() => $('importFile').click());
+$('importFile').addEventListener('change',event => {
+  const file = event.target.files && event.target.files[0];
+  if (file) importJson(file);
+  event.target.value = '';
+});
+$('print').addEventListener('click',() => window.print());
+$('reset').addEventListener('click',() => {
+  if (!confirm('Réinitialiser toutes les catégories et les pourcentages ? Exporte d’abord tes réglages si tu veux les conserver.')) return;
+  settings = structuredClone(DEFAULTS);
+  $('amount').value = DEFAULTS.amount;
+  $('unexpected').value = DEFAULTS.unexpectedAmount;
+  $('cur').value = DEFAULTS.currency;
+  render();
+  saveLocal();
+  document.querySelectorAll('.editor').forEach(el => {
+    if (el.id !== 'mainEditor') el.hidden = true;
+  });
+});
+
+loadLocal();
 render();
-if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load',() => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
 </script>
-</body></html>
+</body>
+</html>
+/* Tableau de bord statistique */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.stat-card {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel2);
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: .82rem;
+  color: var(--muted);
+}
+
+.stat-value {
+  margin-top: 7px;
+  font-weight: 800;
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+.chart-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.donut {
+  width: 210px;
+  height: 210px;
+  max-width: 100%;
+  border-radius: 50%;
+  position: relative;
+  background: var(--panel2);
+}
+
+.donut::after {
+  content: "";
+  position: absolute;
+  inset: 27%;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+}
+
+.donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  text-align: center;
+  pointer-events: none;
+}
+
+.donut-center strong {
+  font-size: .95rem;
+  overflow-wrap: anywhere;
+  max-width: 90%;
+}
+
+.donut-center span {
+  color: var(--muted);
+  font-size: .75rem;
+}
+
+.chart-legend {
+  width: 100%;
+  display: grid;
+  gap: 9px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .85rem;
+}
+
+.legend-dot {
+  width: 11px;
+  height: 11px;
+  flex: 0 0 11px;
+  border-radius: 3px;
+}
+
+.legend-name {
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+
+.legend-value {
+  font-weight: 700;
+  text-align: right;
+}
+
+.bar-list {
+  display: grid;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.bar-row {
+  display: grid;
+  gap: 6px;
+}
+
+.bar-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: .85rem;
+}
+
+.bar-heading span:first-child {
+  overflow-wrap: anywhere;
+}
+
+.bar-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--panel2);
+}
+
+.bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 20px;
+  background: var(--gold);
+  transition: width .25s ease;
+}
+
+.chart-message {
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: .88rem;
+}
+
+@media (min-width: 650px) {
+  .stats-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .chart-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+<div class="twocol">
+<section class="card" id="statistics">
+  <h2>Tableau de bord statistique</h2>
+  <p class="muted">
+    Vue d'ensemble des montants calculés à partir de tes paramètres actuels.
+  </p>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Montant disponible</div>
+      <div class="stat-value" id="statAvailable">0 FCFA</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Montant réparti</div>
+      <div class="stat-value" id="statAllocated">0 FCFA</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Écart de répartition</div>
+      <div class="stat-value" id="statDifference">0 FCFA</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Dîme prévue</div>
+      <div class="stat-value" id="statTithe">0 FCFA</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Salaire personnel</div>
+      <div class="stat-value" id="statSalary">0 FCFA</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Équilibre de la répartition</div>
+      <div class="stat-value" id="statBalance">À vérifier</div>
+    </div>
+  </div>
+
+  <div class="chart-layout">
+    <div>
+      <h2>Répartition du montant disponible</h2>
+
+      <div class="donut-wrap">
+        <div class="donut" id="allocationDonut"
+             role="img"
+             aria-label="Graphique circulaire de la répartition">
+          <div class="donut-center">
+            <strong id="donutTotal">0 FCFA</strong>
+            <span>Montant disponible</span>
+          </div>
+        </div>
+
+        <div class="chart-legend" id="allocationLegend"></div>
+      </div>
+    </div>
+
+    <div>
+      <h2>Comparaison des enveloppes</h2>
+      <div class="bar-list" id="allocationBars"></div>
+    </div>
+  </div>
+
+  <p class="muted" id="chartNotice" aria-live="polite"></p>
+</section>
+function render() {
+  renderMain();
+  ['invest','cash','salary','living','unexpected'].forEach(renderCards);
+  renderMainEditor();
+
+  renderDashboard();
+}
+loadLocal();
+function renderDashboard() {
+  const amount = num($('amount').value);
+  const allocated = settings.main.reduce(
+    (sum, item) => sum + amount * num(item.pct) / 100,
+    0
+  );
+
+  const difference = amount - allocated;
+  const sumPct = totalPct(settings.main);
+  const balanced = Math.abs(sumPct - 100) < 0.000001;
+
+  $('statAvailable').textContent = money(amount);
+  $('statAllocated').textContent = money(allocated);
+  $('statDifference').textContent = money(difference);
+
+  const tithe = settings.main.find(item => item.id === 'tithe');
+  const salary = settings.main.find(item => item.id === 'salary');
+
+  $('statTithe').textContent = money(
+    amount * (tithe ? num(tithe.pct) : 0) / 100
+  );
+
+  $('statSalary').textContent = money(
+    amount * (salary ? num(salary.pct) : 0) / 100
+  );
+
+  $('statBalance').textContent = balanced
+    ? '100 % · Équilibré'
+    : sumPct.toLocaleString('fr-FR') + ' % · À corriger';
+
+  $('statBalance').style.color = balanced
+    ? 'var(--green)'
+    : 'var(--red)';
+
+  $('donutTotal').textContent = money(amount);
+
+  const legend = $('allocationLegend');
+  const donut = $('allocationDonut');
+  const bars = $('allocationBars');
+
+  legend.replaceChildren();
+  bars.replaceChildren();
+
+  const items = settings.main;
+  const colors = [
+    '#dfbd74',
+    '#79ddb0',
+    '#7299e8',
+    '#c18be8',
+    '#e58b78',
+    '#7bcbd1'
+  ];
+
+  const totalPctValue = items.reduce(
+    (sum, item) => sum + num(item.pct),
+    0
+  );
+
+  if (items.length === 0 || totalPctValue <= 0) {
+    donut.style.background = 'var(--panel2)';
+    donut.setAttribute('aria-label', 'Aucune répartition disponible');
+    legend.textContent = 'Ajoute une catégorie avec un pourcentage supérieur à zéro.';
+    bars.textContent = 'Aucune donnée à afficher.';
+    $('chartNotice').textContent =
+      'Les graphiques apparaîtront lorsque des pourcentages seront renseignés.';
+    return;
+  }
+
+  let currentAngle = 0;
+  const gradients = [];
+
+  items.forEach((item, index) => {
+    const pct = num(item.pct);
+    const share = pct / totalPctValue * 100;
+    const start = currentAngle;
+    currentAngle += share * 3.6;
+
+    gradients.push(
+      `${colors[index % colors.length]} ${start}deg ${currentAngle}deg`
+    );
+
+    const legendItem = document.createElement('div');
+    legendItem.className = 'legend-item';
+
+    const dot = document.createElement('span');
+    dot.className = 'legend-dot';
+    dot.style.background = colors[index % colors.length];
+
+    const name = document.createElement('span');
+    name.className = 'legend-name';
+    name.textContent = item.name;
+
+    const value = document.createElement('span');
+    value.className = 'legend-value';
+    value.textContent = money(amount * pct / 100);
+
+    legendItem.append(dot, name, value);
+    legend.append(legendItem);
+  });
+
+  donut.style.background =
+    `conic-gradient(${gradients.join(', ')})`;
+
+  donut.setAttribute(
+    'aria-label',
+    'Répartition proportionnelle des enveloppes financières'
+  );
+
+  const maxPct = Math.max(...items.map(item => num(item.pct)), 1);
+
+  items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'bar-row';
+
+    const heading = document.createElement('div');
+    heading.className = 'bar-heading';
+
+    const label = document.createElement('span');
+    label.textContent = item.name;
+
+    const value = document.createElement('strong');
+    value.textContent = money(amount * num(item.pct) / 100);
+
+    heading.append(label, value);
+
+    const track = document.createElement('div');
+    track.className = 'bar-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'bar-fill';
+    fill.style.width = (num(item.pct) / maxPct * 100) + '%';
+
+    track.append(fill);
+    row.append(heading, track);
+    bars.append(row);
+  });
+
+  $('chartNotice').textContent = balanced
+    ? 'Les enveloppes totalisent 100 %. Les graphiques reflètent les pourcentages actuellement enregistrés.'
+    : 'Attention : les enveloppes totalisent ' +
+      sumPct.toLocaleString('fr-FR') +
+      ' %. Le graphique circulaire compare les proportions entre enveloppes, mais la répartition globale doit être corrigée.';
+}
