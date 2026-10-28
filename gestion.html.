@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KALLA Finance — Gestion financière</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1220;color:#f2f4f8;font-family:Arial,sans-serif}
+header{padding:22px 16px;background:#111a2b;border-bottom:1px solid #354157}
+h1{margin:0;color:#d6b46a;font-size:25px}
+h2{color:#d6b46a;font-size:19px}
+p,.muted{color:#aab6c8;font-size:13px;line-height:1.5}
+nav{display:flex;gap:8px;padding:14px;flex-wrap:wrap}
+nav a{padding:11px;border:1px solid #526078;border-radius:8px;color:#fff;text-decoration:none}
+nav a:last-child{background:#d6b46a;color:#111827}
+main{max-width:1000px;margin:auto;padding:14px}
+.card{background:#151f31;border:1px solid #29364b;border-radius:12px;padding:16px;margin-bottom:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+label{display:block;font-size:13px;color:#aab6c8;margin:12px 0 5px}
+input,select{width:100%;padding:12px;background:#0b1220;color:#f2f4f8;border:1px solid #354157;border-radius:8px}
+button{background:#d6b46a;color:#111827;border:0;padding:12px 16px;border-radius:8px;font-weight:bold;margin-top:14px;cursor:pointer}
+.secondary{background:#26344b;color:#f2f4f8}
+.stat{font-size:20px;font-weight:bold;margin-top:8px;overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:10px 6px;border-bottom:1px solid #354157}
+.table-wrap{overflow-x:auto}
+footer{text-align:center;padding:24px;color:#aab6c8;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>KALLA Finance</h1>
+<p>Gestion des revenus, dépenses et répartition financière</p>
+</header>
+
+<nav>
+<a href="dashboard.html">Tableau de bord</a>
+<a href="gestion.html">Gestion financière</a>
+</nav>
+
+<main>
+<section class="card">
+<h2>Enregistrer une opération</h2>
+<p>Ajoute chaque revenu ou dépense. Les opérations sont conservées dans le navigateur utilisé.</p>
+
+<label for="date">Date</label>
+<input id="date" type="date">
+
+<label for="type">Type d’opération</label>
+<select id="type">
+<option value="income">Revenu</option>
+<option value="expense">Dépense</option>
+</select>
+
+<label for="category">Catégorie</label>
+<select id="category">
+<option>Activité commerciale</option>
+<option>Prestation de service</option>
+<option>Salaire</option>
+<option>Transport</option>
+<option>Logement</option>
+<option>Équipement</option>
+<option>Fournisseurs</option>
+<option>Impôts et charges</option>
+<option>Investissement</option>
+<option>Autre</option>
+</select>
+
+<label for="description">Description</label>
+<input id="description" type="text" placeholder="Ex. Vente de matériel">
+
+<label for="amount">Montant (FCFA)</label>
+<input id="amount" type="number" min="1" step="1" placeholder="Ex. 150000">
+
+<button id="save" type="button">Enregistrer l’opération</button>
+<button id="clear" type="button" class="secondary">Effacer le formulaire</button>
+<p id="message" role="status"></p>
+</section>
+
+<section class="grid">
+<div class="card">
+<div class="muted">Revenus enregistrés</div>
+<div class="stat" id="incomeTotal">0 FCFA</div>
+</div>
+<div class="card">
+<div class="muted">Dépenses enregistrées</div>
+<div class="stat" id="expenseTotal">0 FCFA</div>
+</div>
+<div class="card">
+<div class="muted">Solde calculé</div>
+<div class="stat" id="balance">0 FCFA</div>
+</div>
+</section>
+
+<section class="card">
+<h2>Répartition indicative du solde positif</h2>
+<p>Cette répartition est une simulation : elle ne transfère pas réellement l’argent. Les pourcentages doivent totaliser 100 %.</p>
+
+<div class="grid">
+<div><label for="tithe">Dîme (%)</label><input id="tithe" type="number" min="0" max="100" value="10"></div>
+<div><label for="salary">Salaire personnel (%)</label><input id="salary" type="number" min="0" max="100" value="25"></div>
+<div><label for="treasury">Trésorerie (%)</label><input id="treasury" type="number" min="0" max="100" value="25"></div>
+<div><label for="investment">Investissement (%)</label><input id="investment" type="number" min="0" max="100" value="40"></div>
+</div>
+
+<p id="allocationCheck">Total : 100 %</p>
+<div id="allocationResults"></div>
+</section>
+
+<section class="card">
+<h2>Historique des opérations</h2>
+<label for="filter">Filtrer les opérations</label>
+<select id="filter">
+<option value="all">Toutes les opérations</option>
+<option value="income">Revenus uniquement</option>
+<option value="expense">Dépenses uniquement</option>
+</select>
+<div class="table-wrap">
+<table>
+<thead>
+<tr><th>Date</th><th>Type</th><th>Catégorie</th><th>Montant</th><th>Action</th></tr>
+</thead>
+<tbody id="history"></tbody>
+</table>
+</div>
+<button id="export" type="button" class="secondary">Exporter en CSV</button>
+</section>
+</main>
+
+<footer>KALLA Finance — Gestion financière</footer>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const key="kallaFinanceTransactionsV1";
+let transactions=[];
+
+try{
+const saved=JSON.parse(localStorage.getItem(key)||"[]");
+if(Array.isArray(saved)) transactions=saved;
+}catch(e){transactions=[];}
+
+const money=n=>new Intl.NumberFormat("fr-FR",{maximumFractionDigits:0}).format(n)+" FCFA";
+const today=new Date();
+$("date").value=[today.getFullYear(),String(today.getMonth()+1).padStart(2,"0"),String(today.getDate()).padStart(2,"0")].join("-");
+
+function persist(){
+try{
+localStorage.setItem(key,JSON.stringify(transactions));
+return true;
+}catch(e){
+$("message").textContent="Impossible d’enregistrer les données dans ce navigateur.";
+return false;
+}
+}
+
+function allocation(){
+const fields=[
+["Dîme","tithe"],
+["Salaire personnel","salary"],
+["Trésorerie","treasury"],
+["Fonds d’investissement","investment"]
+];
+const values=fields.map(([name,id])=>({
+name,
+percent:Math.max(0,Math.min(100,Number($(id).value)||0))
+}));
+const total=values.reduce((s,v)=>s+v.percent,0);
+$("allocationCheck").textContent="Total : "+total+" %"+(total===100?" — répartition valide.":" — le total doit être égal à 100 %.");
+
+const income=transactions.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
+const expenses=transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
+const balance=income-expenses;
+$("allocationResults").replaceChildren();
+
+values.forEach(v=>{
+const row=document.createElement("p");
+row.textContent=v.name+" ("+v.percent+" %) : "+money(total===100&&balance>0?balance*v.percent/100:0);
+$("allocationResults").appendChild(row);
+});
+}
+
+function render(){
+const income=transactions.filter(t=>t.type==="income").reduce((s,t)=>s+t.amount,0);
+const expenses=transactions.filter(t=>t.type==="expense").reduce((s,t)=>s+t.amount,0);
+$("incomeTotal").textContent=money(income);
+$("expenseTotal").textContent=money(expenses);
+$("balance").textContent=money(income-expenses);
+$("balance").style.color=income-expenses<0?"#ff9999":"#6bd5ae";
+
+const filter=$("filter").value;
+const shown=transactions.filter(t=>filter==="all"||t.type===filter).slice().reverse();
+const body=$("history");
+body.replaceChildren();
+
+if(!shown.length){
+const tr=document.createElement("tr");
+const td=document.createElement("td");
+td.colSpan=5;
+td.textContent="Aucune opération enregistrée.";
+tr.appendChild(td);
+body.appendChild(tr);
+}
+
+shown.forEach(t=>{
+const tr=document.createElement("tr");
+[t.date,t.type==="income"?"Revenu":"Dépense",t.category,money(t.amount)].forEach(value=>{
+const td=document.createElement("td");
+td.textContent=value;
+tr.appendChild(td);
+});
+const action=document.createElement("td");
+const button=document.createElement("button");
+button.type="button";
+button.textContent="Supprimer";
+button.className="secondary";
+button.style.marginTop="0";
+button.addEventListener("click",()=>{
+if(!confirm("Supprimer cette opération ?")) return;
+transactions=transactions.filter(item=>item.id!==t.id);
+if(persist()) render();
+});
+action.appendChild(button);
+tr.appendChild(action);
+body.appendChild(tr);
+});
+allocation();
+}
+
+$("save").addEventListener("click",()=>{
+const amount=Number($("amount").value);
+if(!Number.isFinite(amount)||amount<=0){
+$("message").textContent="Saisis un montant supérieur à zéro.";
+return;
+}
+const description=$("description").value.trim();
+transactions.push({
+id:Date.now().toString()+"-"+Math.random().toString(36).slice(2,8),
+date:$("date").value,
+type:$("type").value,
+category:$("category").value,
+description,
+amount
+});
+if(persist()){
+$("amount").value="";
+$("description").value="";
+$("message").textContent="Opération enregistrée.";
+render();
+}
+});
+
+$("clear").addEventListener("click",()=>{
+$("description").value="";
+$("amount").value="";
+$("message").textContent="";
+});
+
+$("filter").addEventListener("change",render);
+["tithe","salary","treasury","investment"].forEach(id=>$(id).addEventListener("input",allocation));
+
+$("export").addEventListener("click",()=>{
+const rows=[["Date","Type","Catégorie","Description","Montant"]];
+transactions.forEach(t=>rows.push([t.date,t.type,t.category,t.description,t.amount]));
+const csv=rows.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(";")).join("\r\n");
+const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url;
+a.download="kalla-finance-operations.csv";
+a.click();
+URL.revokeObjectURL(url);
+});
+
+render();
+})();
+</script>
+</body>
+</html>
