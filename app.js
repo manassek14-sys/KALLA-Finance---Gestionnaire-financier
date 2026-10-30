@@ -1,4 +1,4 @@
-(()=>{'use strict';
+()=>{'use strict';
 const $=id=>document.getElementById(id), KEY='kalla-finance-complete-v1';
 const today=()=>new Date().toISOString().slice(0,10);
 const defaults={currency:'FCFA',profit:1000000,theme:'#d9b66f',
