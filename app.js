@@ -117,6 +117,7 @@ function renderDashboard(){
   if($('statNet')) $('statNet').textContent=money(t.net);
   if($('statProfit')) $('statProfit').textContent=money(data.profit);
 
+  // Bloc 1 : Répartition principale
   const list=$('allocationChart');
   if(list){
     list.innerHTML='';
@@ -131,23 +132,73 @@ function renderDashboard(){
       :'Attention : la répartition principale totalise '+total+' %. Ajuste-la dans Personnalisation.';
   }
 
-  // Affiche les sous-catégories de l'enveloppe "invest" (ou la première si absente)
-  const inv=$('investChart');
+  // Blocs de détail : Salaire + Trésorerie + Investissement
+  const detailIds = [
+    {id:'salary', title:'Répartition du salaire personnel'},
+    {id:'cash', title:'Répartition de la trésorerie entreprise'},
+    {id:'invest', title:'Répartition du fonds d’investissement'}
+  ];
+
+  // On utilise le conteneur existant (investChart) et on y met les 3 blocs
+  const inv = $('investChart');
   if(inv){
-    inv.innerHTML='';
-    const investId=data.main.find(m=>m.id==='invest')?.id || (data.main[0]&&data.main[0].id);
-    const subList=data.sub[investId]||[];
-    const parentPct=allocation(investId);
-    subList.forEach(x=>{
-      inv.append(bar(x.name,x.pct,Number(data.profit)*parentPct/100*Number(x.pct)/100,pctsum(subList)));
+    inv.innerHTML = '';
+    // On cherche le parent pour y ajouter plusieurs cartes si possible
+    const parent = inv.closest('.card') || inv.parentElement;
+
+    detailIds.forEach((item, index) => {
+      const subList = data.sub[item.id] || [];
+      if(subList.length === 0) return;
+
+      const parentPct = allocation(item.id);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.style.marginTop = index === 0 ? '0' : '14px';
+
+      let html = `<h2>${item.title}</h2>
+                  <p class="hint">Calculée sur le montant disponible.</p>`;
+
+      subList.forEach(x => {
+        const amount = Number(data.profit) * parentPct / 100 * Number(x.pct) / 100;
+        const w = pctsum(subList) > 0 ? Math.min(100, (Number(x.pct) / pctsum(subList)) * 100) : 0;
+        html += `<div class="bar-item">
+                   <span class="bar-label">${esc(x.name)}</span>
+                   <div class="bar-track"><div class="bar-fill" style="width:${w}%"></div></div>
+                   <span class="bar-value">${Number(x.pct)||0}% · ${money(amount)}</span>
+                 </div>`;
+      });
+
+      card.innerHTML = html;
+
+      if(index === 0){
+        // On remplace le contenu de l’ancien bloc investissement
+        inv.innerHTML = '';
+        inv.appendChild(card);
+      } else {
+        // On ajoute les blocs suivants juste après
+        if(parent && parent.parentElement){
+          parent.parentElement.insertBefore(card, parent.nextSibling);
+        } else {
+          inv.appendChild(card);
+        }
+      }
     });
   }
 
-  const recent=[...data.transactions].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+  // Dernières opérations
+  const recent = [...data.transactions].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
   if($('recentList')){
-    $('recentList').innerHTML=recent.length
-      ?recent.map(t=>`<div class="operation"><div><div class="op-title">${esc(t.label)}</div><div class="op-meta">${esc(t.date)} · ${esc(t.category)}</div></div><div class="${t.type==='income'?'amount-in':'amount-out'}">${t.type==='income'?'+':'−'}${money(t.amount)}</div></div>`).join('')
-      :'<p class="muted">Aucune opération pour le moment.</p>';
+    $('recentList').innerHTML = recent.length
+      ? recent.map(t => `<div class="operation">
+          <div>
+            <div class="op-title">${esc(t.label)}</div>
+            <div class="op-meta">${esc(t.date)} · ${esc(t.category)}</div>
+          </div>
+          <div class="${t.type==='income'?'amount-in':'amount-out'}">
+            ${t.type==='income'?'+':'−'}${money(t.amount)}
+          </div>
+        </div>`).join('')
+      : '<p class="muted">Aucune opération pour le moment.</p>';
   }
 }
 
