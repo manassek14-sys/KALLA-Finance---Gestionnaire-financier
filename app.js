@@ -506,3 +506,4 @@ refreshAll();
 const hash=location.hash.slice(1);
 if(['dashboard','transactions','budget','invest','business','reports','settings'].includes(hash)) go(hash);
 })();
+
