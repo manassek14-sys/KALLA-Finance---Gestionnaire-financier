@@ -55,10 +55,7 @@ function load(){
       const d={...clone(defaults),...x};
       d.main=Array.isArray(x.main)&&x.main.length?x.main:clone(defaults.main);
       d.sub=x.sub&&typeof x.sub==='object'?{...clone(defaults.sub),...x.sub}:clone(defaults.sub);
-      // S'assurer que chaque enveloppe principale a un tableau de sous-catégories
-      d.main.forEach(m=>{
-        if(!d.sub[m.id]) d.sub[m.id]=[];
-      });
+      d.main.forEach(m=>{ if(!d.sub[m.id]) d.sub[m.id]=[]; });
       d.categories=x.categories||clone(defaults.categories);
       d.transactions=Array.isArray(x.transactions)?x.transactions:[];
       d.investments=Array.isArray(x.investments)?x.investments:[];
@@ -67,7 +64,6 @@ function load(){
       return d;
     }
   }catch(e){}
-  // Ancienne version
   try{
     const old=JSON.parse(localStorage.getItem('kalla-finance-settings-v2'));
     if(old){
@@ -135,11 +131,11 @@ function renderDashboard(){
       :'Attention : la répartition principale totalise '+total+' %. Ajuste-la dans Personnalisation.';
   }
 
-  // Graphique investissement (ou première enveloppe avec sous-catégories)
+  // Affiche les sous-catégories de l'enveloppe "invest" (ou la première si absente)
   const inv=$('investChart');
   if(inv){
     inv.innerHTML='';
-    const investId=data.main.find(m=>m.id==='invest')?.id || data.main[0]?.id;
+    const investId=data.main.find(m=>m.id==='invest')?.id || (data.main[0]&&data.main[0].id);
     const subList=data.sub[investId]||[];
     const parentPct=allocation(investId);
     subList.forEach(x=>{
@@ -219,7 +215,7 @@ function renderReports(){
 }
 
 function renderSettings(){
-  // Enveloppes principales
+  // Enveloppes principales (celles qui apparaissent sur le tableau de bord)
   if($('mainAllocationEditor')){
     $('mainAllocationEditor').innerHTML=data.main.map((x,i)=>settingRow(x.name,x.pct,'main',i)).join('');
   }
@@ -244,8 +240,6 @@ function renderSettings(){
 
   // Sous-catégories pour TOUTES les enveloppes principales
   if($('subAllocationEditors')){
-    const labels={};
-    data.main.forEach(m=>labels[m.id]=m.name);
     $('subAllocationEditors').innerHTML=data.main.map(m=>{
       const key=m.id;
       if(!data.sub[key]) data.sub[key]=[];
@@ -366,7 +360,7 @@ if($('saveBudgets')) $('saveBudgets').addEventListener('click',()=>{
   save();renderBudget();toast('Budgets enregistrés.');
 });
 
-// Édition des enveloppes principales + sous-catégories
+// Édition des enveloppes principales
 if($('mainAllocationEditor')) $('mainAllocationEditor').addEventListener('change',e=>{
   const el=e.target;
   if(el.dataset.name){
@@ -393,16 +387,14 @@ if($('subAllocationEditors')) $('subAllocationEditors').addEventListener('change
   save();renderSettings();renderDashboard();
 });
 
-// Clics : retirer / ajouter sous-catégorie / supprimer catégorie
+// Clics : retirer / ajouter sous-catégorie
 document.addEventListener('click',e=>{
   const rm=e.target.closest('[data-remove]');
   if(rm){
     const [g,i]=rm.dataset.remove.split(':');
     if(g==='main'){
       if(data.main.length<=1) return toast('Garde au moins une enveloppe.');
-      const removed=data.main.splice(Number(i),1)[0];
-      // On garde les sous-catégories au cas où, mais on peut aussi les supprimer
-      // delete data.sub[removed.id];
+      data.main.splice(Number(i),1);
     } else if(data.sub[g]){
       if(data.sub[g].length<=1) return toast('Garde au moins une sous-catégorie.');
       data.sub[g].splice(Number(i),1);
@@ -429,13 +421,14 @@ document.addEventListener('click',e=>{
   }
 });
 
-// Ajouter une nouvelle enveloppe principale
+// ===== BOUTON PRINCIPAL : Ajouter une enveloppe =====
 if($('addMainCategory')) $('addMainCategory').addEventListener('click',()=>{
   const id='custom-'+Date.now();
-  data.main.push({id,name:'Nouvelle enveloppe',pct:0});
-  data.sub[id]=[]; // crée immédiatement l’espace pour les sous-catégories
+  data.main.push({id, name:'Nouvelle enveloppe', pct:0});
+  data.sub[id]=[]; // crée l’espace pour les sous-catégories
   save();
   renderSettings();
+  renderDashboard();
   toast('Nouvelle enveloppe ajoutée. Ajuste le % pour arriver à 100 %.');
 });
 
