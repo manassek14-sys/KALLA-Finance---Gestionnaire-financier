@@ -14,10 +14,7 @@
 <body>
 <header class="topbar">
   <a class="brand" href="index.html">KALLA <span>FINANCE</span></a>
-  <div class="top-actions">
-    <span id="saveState" class="save-state">Enregistré sur cet appareil</span>
-    <button class="icon-btn" id="exportAll" title="Exporter une sauvegarde">Sauvegarde</button>
-  </div>
+  <div class="top-actions"><span id="saveState" class="save-state">Enregistré sur cet appareil</span><button class="icon-btn" id="exportAll" title="Exporter une sauvegarde">Sauvegarde</button></div>
 </header>
 <div class="shell">
 <aside class="sidebar">
@@ -32,11 +29,68 @@
   <div class="sidebar-note">Données privées stockées dans le navigateur de cet appareil.</div>
 </aside>
 <main>
-  <!-- Toutes les sections restent identiques à ton fichier -->
-  <!-- ... (je garde exactement ta structure) ... -->
-</main>
-</div>
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script src="app.js"></script>
-</body>
-</html>
+<section class="page active" id="page-dashboard">
+  <div class="page-head"><div><p class="eyebrow">VUE D’ENSEMBLE</p><h1>Tableau de bord</h1><p class="sub">Une vision claire de tes finances.</p></div><label class="currency-wrap">Devise<select id="currency"><option>FCFA</option><option>EUR</option><option>RMB</option><option>USD</option></select></label></div>
+  <div class="stats">
+    <article class="stat"><span>Revenus enregistrés</span><strong id="statIncome">0 FCFA</strong><small>Somme des revenus</small></article>
+    <article class="stat"><span>Dépenses enregistrées</span><strong id="statExpense">0 FCFA</strong><small>Somme des dépenses</small></article>
+    <article class="stat"><span>Solde net</span><strong id="statNet">0 FCFA</strong><small>Revenus moins dépenses</small></article>
+    <article class="stat accent"><span>Bénéfice distribuable</span><strong id="statProfit">0 FCFA</strong><small>À confirmer après charges et provisions</small></article>
+  </div>
+  <div class="two-col">
+    <article class="panel"><div class="panel-head"><div><h2>Répartition du bénéfice</h2><p class="sub">Réglages modifiables dans Personnalisation.</p></div></div><div id="allocationChart" class="bar-list"></div><div id="allocationNote" class="notice"></div></article>
+    <article class="panel"><div class="panel-head"><div><h2>Dernières opérations</h2><p class="sub">Les cinq plus récentes.</p></div><button class="text-btn" data-goto="transactions">Voir tout</button></div><div id="recentList" class="operation-list"></div></article>
+  </div>
+  <article class="panel"><div class="panel-head"><div><h2>Répartition du fonds d’investissement</h2><p class="sub">Calculée sur le montant disponible.</p></div></div><div id="investChart" class="bar-list"></div></article>
+</section>
+
+<section class="page" id="page-transactions">
+  <div class="page-head"><div><p class="eyebrow">MOUVEMENTS</p><h1>Revenus et dépenses</h1><p class="sub">Enregistre les opérations et garde une trace de tes mouvements.</p></div></div>
+  <article class="panel">
+    <h2>Ajouter une opération</h2>
+    <form id="transactionForm" class="form-grid">
+      <label>Type<select id="txType"><option value="income">Revenu</option><option value="expense">Dépense</option></select></label>
+      <label>Libellé<input id="txLabel" required maxlength="90" placeholder="Ex. : vente, transport, prestation"></label>
+      <label>Montant<input id="txAmount" required type="number" min="0.01" step="any" inputmode="decimal" placeholder="0"></label>
+      <label>Catégorie<select id="txCategory"></select></label>
+      <label>Date<input id="txDate" type="date" required></label>
+      <label>Note (facultatif)<input id="txNote" maxlength="180" placeholder="Référence ou précision"></label>
+      <div class="form-actions"><button class="primary" type="submit">Enregistrer l’opération</button></div>
+    </form>
+  </article>
+  <article class="panel"><div class="panel-head"><h2>Historique</h2><div class="filter-row"><select id="filterType"><option value="all">Tous les types</option><option value="income">Revenus</option><option value="expense">Dépenses</option></select><input id="filterText" placeholder="Rechercher"></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Opération</th><th>Catégorie</th><th>Montant</th><th></th></tr></thead><tbody id="transactionRows"></tbody></table></div><p class="muted" id="transactionEmpty">Aucune opération pour le moment.</p></article>
+</section>
+
+<section class="page" id="page-budget">
+  <div class="page-head"><div><p class="eyebrow">PLANIFICATION</p><h1>Budget</h1><p class="sub">Compare les montants prévus aux dépenses saisies par catégorie.</p></div></div>
+  <article class="panel"><div class="panel-head"><div><h2>Budget mensuel par catégorie</h2><p class="sub">Renseigne une limite pour les catégories de dépenses.</p></div></div><div id="budgetList" class="budget-list"></div><button class="primary" id="saveBudgets">Enregistrer les budgets</button><p class="muted" id="budgetStatus"></p></article>
+</section>
+
+<section class="page" id="page-invest">
+  <div class="page-head"><div><p class="eyebrow">CAPITAL</p><h1>Investissements</h1><p class="sub">Suis les sommes engagées sur tes projets.</p></div></div>
+  <article class="panel"><h2>Ajouter un investissement</h2><form id="investmentForm" class="form-grid"><label>Projet / actif<input id="invName" required maxlength="90" placeholder="Ex. : matériel BTP"></label><label>Montant investi<input id="invAmount" required type="number" min="0.01" step="any" inputmode="decimal"></label><label>Date<input id="invDate" type="date" required></label><label>Statut<select id="invStatus"><option>À étudier</option><option>En cours</option><option>Terminé</option><option>En pause</option></select></label><div class="form-actions"><button class="primary" type="submit">Ajouter l’investissement</button></div></form></article>
+  <article class="panel"><div class="panel-head"><h2>Portefeuille</h2><strong id="investmentTotal">0 FCFA</strong></div><div id="investmentList" class="entity-list"></div></article>
+</section>
+
+<section class="page" id="page-business">
+  <div class="page-head"><div><p class="eyebrow">ACTIVITÉS</p><h1>Entreprises et projets</h1><p class="sub">Centralise les activités que tu souhaites suivre.</p></div></div>
+  <article class="panel"><h2>Ajouter une activité</h2><form id="businessForm" class="form-grid"><label>Nom de l’activité<input id="bizName" required maxlength="90" placeholder="Ex. : KALLA Logistics"></label><label>Secteur<input id="bizSector" maxlength="70" placeholder="Ex. : logistique, BTP"></label><label>Capital engagé<input id="bizCapital" type="number" min="0" step="any" inputmode="decimal" value="0"></label><label>Statut<select id="bizStatus"><option>En préparation</option><option>En activité</option><option>En pause</option><option>Clôturé</option></select></label><div class="form-actions"><button class="primary" type="submit">Ajouter l’activité</button></div></form></article>
+  <article class="panel"><h2>Mes activités</h2><div id="businessList" class="entity-list"></div></article>
+</section>
+
+<section class="page" id="page-reports">
+  <div class="page-head"><div><p class="eyebrow">ANALYSE</p><h1>Rapports</h1><p class="sub">Synthèse des opérations enregistrées.</p></div><button class="primary" id="exportCsv">Exporter les opérations (CSV)</button></div>
+  <div class="stats"><article class="stat"><span>Nombre d’opérations</span><strong id="reportCount">0</strong></article><article class="stat"><span>Investissements suivis</span><strong id="reportInvCount">0</strong></article><article class="stat"><span>Activités suivies</span><strong id="reportBizCount">0</strong></article></div>
+  <article class="panel"><h2>Résumé par catégorie</h2><div class="table-wrap"><table><thead><tr><th>Catégorie</th><th>Revenus</th><th>Dépenses</th><th>Net</th></tr></thead><tbody id="reportRows"></tbody></table></div></article>
+  <article class="panel"><h2>Imprimer ou enregistrer en PDF</h2><p class="sub">Sur iPhone : bouton Partager dans Safari, puis Imprimer ou Enregistrer dans Fichiers.</p><button id="printReport">Imprimer le rapport</button></article>
+</section>
+
+<section class="page" id="page-settings">
+  <div class="page-head"><div><p class="eyebrow">CONTRÔLE</p><h1>Personnalisation</h1><p class="sub">Adapte les règles à ton fonctionnement sans modifier le code.</p></div></div>
+  <article class="panel"><h2>Montant de référence</h2><p class="sub">Saisis le bénéfice distribuable après charges, impôts, dettes et provisions nécessaires. Ce n’est pas le chiffre d’affaires.</p><div class="form-grid"><label>Montant distribuable<input id="profitAmount" type="number" min="0" step="any" inputmode="decimal"></label><label>Couleur principale<select id="themeColor"><option value="#d9b66f">Or classique</option><option value="#79ddb0">Vert</option><option value="#86a9ff">Bleu</option><option value="#c49aff">Violet</option><option value="#f09b87">Cuivre</option></select></label></div></article>
+  <article class="panel"><div class="panel-head"><div><h2>Répartition principale</h2><p class="sub">La somme doit être égale à 100 %.</p></div><strong id="mainPctTotal">100 %</strong></div><div id="mainAllocationEditor" class="settings-list"></div><button class="secondary" id="addMainCategory">Ajouter une enveloppe</button><p id="mainPctStatus" class="muted"></p></article>
+  <article class="panel"><div class="panel-head"><div><h2>Catégories de revenus et dépenses</h2><p class="sub">Renomme, ajoute ou supprime des catégories.</p></div></div><div class="settings-two"><div><h3>Revenus</h3><div id="incomeCategories" class="settings-list"></div><form id="addIncomeCategory" class="inline-add"><input id="newIncomeCategory" placeholder="Nouvelle catégorie" required maxlength="50"><button type="submit">Ajouter</button></form></div><div><h3>Dépenses</h3><div id="expenseCategories" class="settings-list"></div><form id="addExpenseCategory" class="inline-add"><input id="newExpenseCategory" placeholder="Nouvelle catégorie" required maxlength="50"><button type="submit">Ajouter</button></form></div></div></article>
+  <article class="panel"><div class="panel-head"><div><h2>Sous-catégories des enveloppes</h2><p class="sub">Pourcentages internes : chaque groupe doit totaliser 100 %.</p></div></div><div id="subAllocationEditors"></div></article>
+  <article class="panel"><h2>Sauvegarde et remise à zéro</h2><p class="sub">Exportation conseillée régulièrement. La réinitialisation efface les données locales de cette application.</p><div class="button-row"><button class="primary" id="saveSettings">Enregistrer les paramètres</button><button id="importAll">Importer une sauvegarde JSON</button><button class="danger-btn" id="resetAll">Effacer toutes les données</button><input id="importJsonFile" type="file" accept=".json,application/json" hidden></div><p id="settingsStatus" class="muted" aria-live="polite"></p></article>
+  <article class="panel"><h2>Confidentialité</h2><p class="sub">Cette version est prévue pour un seul utilisateur et stocke les données dans le navigateur de cet appareil. Elle n’a pas de compte en ligne ni de chiffrement serveur. Ne l’utilise pas comme coffre-fort pour des mots de passe, coordonnées bancaires ou informations très sensibles. Si tu effaces les données du navigateur, elles peuvent être perdues : exporte une sauvegarde.</p></article>
+</section>
