@@ -231,7 +231,6 @@ function renderBudget(){
     </div>`;
   }).join('');
 }
-
 function renderInvestments(){
   const el=$('investmentList');
   if(!el) return;
